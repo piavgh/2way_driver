@@ -1,0 +1,14 @@
+<ion-view view-title="Đăng nhập" name="login-view">
+    <ion-content class="padding">
+        <div class="list list-inset">
+            <label class="item item-input">
+                <input type="text" placeholder="Tài khoản" ng-model="loginForm.username">
+            </label>
+            <label class="item item-input">
+                <input type="password" placeholder="Mật khẩu" ng-model="loginForm.password">
+            </label>
+        </div>
+        <div ng-bind="formWarning" class="assertive text-center padding"></div>
+        <button class="button button-block button-balanced" ng-click="doLogin()">Đăng nhập</button>
+    </ion-content>
+</ion-view>

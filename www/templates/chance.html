@@ -1,0 +1,57 @@
+<ion-view view-title="Cơ hội vận chuyển" hide-back-button="true" align-title="center">
+    <ion-content class="has-header has-tabs text-left padding">
+        <!-- Pull down refresher -->
+        <ion-refresher
+                pulling-text="Pull to refresh..."
+                on-refresh="doRefresh()">
+        </ion-refresher>
+        <!-- end of refresher -->
+
+        <div class="padding-vertical">
+            <!-- Notification for no request -->
+            <div class="list list-inset" ng-if="!chances.length">
+                <div class="item item-text-wrap text-center">
+                    Chưa có giao dịch nào
+                </div>
+            </div>
+            <!-- end of notification -->
+
+            <!-- Request list -->
+            <div class="list list-inset" ng-repeat="chance in chances" ng-click="goDetail(chance)">
+                <div class="item item-divider positive">
+                    <span>{{chance.clientPhone}}</span>
+                </div>
+                <div class="item">
+                    <label>{{chance.description}}</label>
+                </div>
+                <div class="item">
+                    <label>Từ: {{chance.pickupLocation}}</label>
+                </div>
+                <div class="item">
+                    <label>Đến: {{chance.receiveLocation}}</label>
+                </div>
+            </div>
+        </div>
+        <!-- end of request list -->
+
+        <!-- Load more scroll -->
+        <ion-infinite-scroll ng-if='moreDataCanBeLoaded' on-infinite="loadMoreData()" icon="ion-loading-c"
+                             distance="1%">
+        </ion-infinite-scroll>
+        <!-- end of scroll -->
+
+    </ion-content>
+    <div class="tabs-stable tabs-striped tabs-color-balanced">
+        <div class="tabs ">
+            <a class="tab-item active" href="#/tab/chance">
+                <i class="icon ion-star"></i>
+            </a>
+            <a class="tab-item" href="#/tab/working">
+                <i class="icon ion-paper-airplane"></i>
+            </a>
+            <a class="tab-item" href="#/tab/manage">
+                <i class="icon ion-chatboxes"></i>
+            </a>
+        </div>
+    </div>
+</ion-view>
