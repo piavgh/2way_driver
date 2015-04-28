@@ -1,0 +1,36 @@
+<ion-modal-view>
+    <ion-header-bar class="bar-stable">
+        <h1 class="title">Gửi báo giá</h1>
+        <button class="button button-clear button-positive" ng-click="closeNewBid()">Hủy</button>
+    </ion-header-bar>
+    <ion-content>
+        <form ng-submit="sendBid(sendBidForm)">
+            <div class="padding-vertical">
+                <div class="list list-inset">
+                    <div class="item item-divider positive">
+                        <span>Thông tin báo giá</span>
+                    </div>
+                    <label class="item item-input">
+                        <input type="text" placeholder="Vui lòng nhập giá" ng-model="sendBidForm.price">
+                    </label>
+                    <label class="item item-input">
+                        <input type="text" placeholder="Thời gian vận chuyển" ng-model="sendBidForm.transportAt">
+                    </label>
+                    <label class="item item-input">
+                        <input type="text" placeholder="Phương thức vận chuyển" ng-model="sendBidForm.transportMethod">
+                    </label>
+                    <label class="item item-input">
+                        <input type="text" placeholder="Phương thức thanh toán" ng-model="sendBidForm.paymentMethod">
+                    </label>
+                    <label class="item item-input">
+                        <input type="text" placeholder="Thông tin bổ sung" ng-model="sendBidForm.moreInfo">
+                    </label>
+                </div>
+                <div ng-bind="formWarning" class="assertive text-center padding"></div>
+                <div class="padding">
+                    <button type="submit" class="button button-block button-balanced">Gửi</button>
+                </div>
+            </div>
+        </form>
+    </ion-content>
+</ion-modal-view>

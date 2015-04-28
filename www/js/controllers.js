@@ -14,8 +14,8 @@ angular.module('driver2way.controllers', [])
             title: 'Đang thực hiện',
             icon: 'ion-paper-airplane'
         }, {
-            href: '#/tab/manage',
-            title: 'Quản lí giao dịch',
+            href: '#/tab/history',
+            title: 'Lịch sử giao dịch',
             icon: 'ion-filing'
         }];
 
@@ -124,8 +124,73 @@ angular.module('driver2way.controllers', [])
 )
 
     .
-    controller('WorkingCtrl', function ($scope, $location, $rootScope) {
+    controller('WorkingCtrl', function ($scope, $location, $rootScope, GlobalTpl) {
+        $scope.workingRequests = [];
+        $scope.page = 1;
+        $scope.moreDataCanBeLoaded = false;
+        $scope.first = true;
 
+        $scope.doRefresh = function () {
+            $scope.first = false;
+            $scope.page = 1;
+            $scope.workingRequests = [];
+            LoadMainRequest();
+        };
+
+        $scope.loadMoreData = function () {
+            LoadMainRequest();
+        };
+
+        $scope.loadData = function () {
+            $scope.workingRequests = [];
+            $scope.page = 1;
+            LoadMainRequest();
+            $scope.first = false;
+        }
+
+        function LoadMainRequest() {
+            var options = {
+                showLoad: true,
+                showAlert: true,
+                method: 'get',
+                url: $rootScope.config.url + "/drivers/1/transactions?page=" + $scope.page + "&type=working"
+            };
+
+            GlobalTpl.request(options, function (response) {
+                // Check there is existing data to load
+                $scope.moreDataCanBeLoaded =
+                    (response && response.data && response.data.length > 0) ? true : false;
+
+                if (response.data && response.data.length > 0) {
+                    // Fetch new requests
+                    for (var i in response.data) {
+                        var res = response.data[i];
+                        $scope.workingRequests.push({
+                            requestId: res.detail.id,
+                            description: res.detail.description,
+                            //clientPhone: res.client.phone,
+                            createdAt: (res.detail.createdAt === undefined) ? '' : res.detail.createdAt,
+                            pickupLocation: res.location[0].address,
+                            receiveLocation: res.location[1].address
+                        });
+                    }
+
+                    $scope.page++;
+                }
+            }, function () {
+                // Stop the ion-refresher from spinning
+                $scope.$broadcast('scroll.refreshComplete');
+                $scope.$broadcast('scroll.infiniteScrollComplete');
+            });
+        }
+
+        if ($scope.first === true) {
+            LoadMainRequest();
+        }
+
+        $scope.goDetail = function (workingRequests) {
+            $location.path("/tab/requestDetail/" + workingRequests.requestId);
+        }
     })
 
     .controller('ChanceCtrl', function ($scope, $location, $rootScope, GlobalTpl) {
@@ -168,26 +233,14 @@ angular.module('driver2way.controllers', [])
                 if (response.data && response.data.length > 0) {
                     // Fetch new requests
                     for (var i in response.data) {
-                        var pickupLocation, receiveLocation;
                         var res = response.data[i];
-                        var locationArray = res.location;
-                        for (var j in locationArray) {
-                            var location = locationArray[j];
-                            if (location.type === "1") {
-                                pickupLocation = location.address;
-                            } else if (location.type === "2") {
-                                receiveLocation = location.address;
-                            } else {
-                                pickupLocation = receiveLocation = "Không xác định";
-                            }
-                        }
                         $scope.chances.push({
                             requestId: res.detail.id,
                             description: res.detail.description,
                             clientPhone: res.client.phone,
                             createdAt: (res.detail.createdAt === undefined) ? '' : res.detail.createdAt,
-                            pickupLocation: pickupLocation,
-                            receiveLocation: receiveLocation
+                            pickupLocation: res.location[0].address,
+                            receiveLocation: res.location[1].address
                         });
                     }
 
@@ -209,12 +262,160 @@ angular.module('driver2way.controllers', [])
         }
     })
 
-    .controller('ManageCtrl', function ($scope, $location, $rootScope) {
+    .controller('HistoryCtrl', function ($scope, $location, $rootScope) {
 
     })
 
-    .controller('RequestDetailCtrl', function ($scope, $stateParams, $rootScope, GlobalTpl) {
+    .controller('RequestDetailCtrl', function ($scope, $stateParams, $rootScope, $http, GlobalTpl, $ionicModal) {
         $scope.id = $stateParams.id;
+        $scope.requestDetail = {};
+        $scope.biddedChances = [];
+        var serializedBiddedChances;
+
+        if (window.localStorage['biddedChances'] !== undefined) {
+            serializedBiddedChances = window.localStorage["biddedChances"];
+            $scope.biddedChances = JSON.parse(serializedBiddedChances);
+        }
+
+        if ($scope.biddedChances.indexOf($scope.id) != -1) {
+            $scope.isDisableBid = true;
+        } else {
+            $scope.isDisableBid = false;
+        }
+
+        $ionicModal.fromTemplateUrl('templates/sendBid.html', {
+            scope: $scope,
+            animation: 'slide-in-up'
+        }).then(function (modal) {
+            $scope.bidModal = modal;
+        });
+
+        $scope.newBid = function () {
+            $scope.bidModal.show();
+        };
+
+        // Close the new task modal
+        $scope.closeNewBid = function () {
+            $scope.bidModal.hide();
+        };
+
+        $scope.sendBidForm = {
+            price: '',
+            transportAt: '',
+            transportMethod: '',
+            paymentMethod: '',
+            moreInfo: ''
+        };
+
+        function validForm() {
+            if (!$scope.sendBidForm.price || typeof $scope.sendBidForm.price === 'undefined' || !$scope.sendBidForm.transportAt || typeof $scope.sendBidForm.transportAt === 'undefined') {
+                return false;
+            }
+            return true;
+        }
+
+        $scope.sendBid = function (sendBidForm) {
+            if (!validForm()) {
+                $scope.formWarning = "Vui lòng nhập báo giá và thời điểm giao hàng";
+            } else {
+                $scope.formWarning = "";
+                $scope.data = {
+                    driverId: 1,
+                    requestId: $scope.id,
+                    price: $scope.sendBidForm.price,
+                    transportAt: $scope.sendBidForm.transportAt,
+                    transportMethod: $scope.sendBidForm.transportMethod,
+                    paymentMethod: $scope.sendBidForm.paymentMethod,
+                    moreInfo: $scope.sendBidForm.moreInfo
+                }
+                var data = JSON.stringify($scope.data);
+                var options = {
+                    showLoad: true,
+                    method: 'post',
+                    url: $rootScope.config.url + '/bids',
+                    data: data,
+                    headers: {
+                        'Content-Type': undefined
+                    }
+                };
+                GlobalTpl.showLoading();
+                $http(options).success(function (response) {
+                    $scope.biddedChances.push($scope.id);
+                    window.localStorage["biddedChances"] = JSON.stringify($scope.biddedChances);
+                    $scope.isDisableBid = true;
+                    GlobalTpl.hideLoading();
+                    GlobalTpl.showAlert({template: "Gửi báo giá thành công"});
+                    $scope.closeNewBid();
+                }).error(function () {
+                    GlobalTpl.hideLoading();
+                    GlobalTpl.showAlert({template: "Vui lòng thử lại"});
+                }).finally(function () {
+                    GlobalTpl.hideLoading();
+                });
+            }
+        };
+
+        $scope.doRefresh = function () {
+            $scope.requestDetail = {};
+            LoadDetail();
+        };
+
+        $scope.getGender = function (id) {
+            if (id === "1") {
+                return "Nam";
+            } else {
+                return "Nữ";
+            }
+        };
+        $scope.getVehicles = function (id) {
+            if (id === "0") {
+                return "Xe tải";
+            } else if (id === "1") {
+                return "Xe có cẩu";
+            } else if (id === "2") {
+                return "Xe container";
+            }
+        }
+        function LoadDetail() {
+            var options = {
+                method: 'get',
+                url: $rootScope.config.url + "/requests/" + $scope.id
+            };
+
+            GlobalTpl.request(options, function (response) {
+                // Check there is existing data to load
+
+                if (response.data && response.data !== null) {
+
+                    // Fetch new requests
+                    var res = response.data;
+
+                    $scope.requestDetail.pickupAddress = res.location[0].address;
+                    $scope.requestDetail.receiveAddress = res.location[1].address;
+                    $scope.requestDetail.time = res.detail.createdAt;
+                    $scope.requestDetail.description = res.detail.description;
+                    $scope.requestDetail.vehicleType = res.detail.vehicleType;
+                    $scope.requestDetail.weight = res.detail.weight;
+                    $scope.requestDetail.length = res.detail.length;
+                    $scope.requestDetail.width = res.detail.width;
+                    $scope.requestDetail.height = res.detail.height;
+                    $scope.requestDetail.feature = res.detail.feature;
+                    $scope.requestDetail.receiverName = res.detail.receiverName;
+                    $scope.requestDetail.receiverGender = res.detail.receiverGender;
+                    $scope.requestDetail.receiverDatetime = res.location[1].time;
+                    $scope.requestDetail.receiverPhone = res.detail.receiverPhone;
+                    $scope.requestDetail.stuffImagePath = res.detail.stuffImagePath;
+                    $scope.requestDetail.receiverImagePath = res.detail.receiverImagePath;
+                    $scope.requestDetail.receiverIdentify = res.detail.receiverIdentify;
+                }
+            }, function () {
+                // Stop the ion-refresher from spinning
+                $scope.$broadcast('scroll.refreshComplete');
+                $scope.$broadcast('scroll.infiniteScrollComplete');
+            });
+        }
+
+        LoadDetail();
     })
 
     .controller('ProfileCtrl', function ($scope, $state, GlobalTpl, $rootScope) {

@@ -6,24 +6,37 @@
                 on-refresh="doRefresh()">
         </ion-refresher>
         <!-- end of refresher -->
-        <label class="item item-input item-select">
-            <div class="input-label">
-                Hiển thị
+
+        <div class="padding-vertical">
+            <!-- Notification for no request -->
+            <div class="list list-inset" ng-if="!workingRequests.length">
+                <div class="item item-text-wrap text-center">
+                    Chưa có giao dịch nào
+                </div>
             </div>
-            <select ng-options="item.name  for item in values" ng-model="selected" ng-change="loadData(selected.type)">
-            </select>
-        </label>
+            <!-- end of notification -->
 
-        <div ng-if="selected.id === 0" ng-include="'templates/trans_tab1.html'" class="padding-vertical">
-        </div><!-- end of request list -->
-
-        <div ng-if="selected.id === 1" ng-include="'templates/trans_tab2.html'" class="padding-vertical">
-        </div><!-- end of request list -->
-        <div ng-if="selected.id === 2" ng-include="'templates/trans_tab3.html'" class="padding-vertical">
-        </div><!-- end of request list -->
+            <!-- Request list -->
+            <div class="list list-inset" ng-repeat="workingRequest in workingRequests" ng-click="goDetail(workingRequest)">
+                <div class="item item-divider balanced">
+                    <span>{{workingRequest.clientPhone}}</span>
+                </div>
+                <div class="item">
+                    <label>{{workingRequest.description}}</label>
+                </div>
+                <div class="item">
+                    <label>Từ: {{workingRequest.pickupLocation}}</label>
+                </div>
+                <div class="item">
+                    <label>Đến: {{workingRequest.receiveLocation}}</label>
+                </div>
+            </div>
+        </div>
+        <!-- end of request list -->
 
         <!-- Load more scroll -->
-        <ion-infinite-scroll ng-if='moreDataCanBeLoaded' on-infinite="loadMoreData()" icon="ion-loading-c" distance="1%">
+        <ion-infinite-scroll ng-if='moreDataCanBeLoaded' on-infinite="loadMoreData()" icon="ion-loading-c"
+                             distance="1%">
         </ion-infinite-scroll>
         <!-- end of scroll -->
 
@@ -36,9 +49,8 @@
             <a class="tab-item active" href="#/tab/working">
                 <i class="icon ion-paper-airplane"></i>
             </a>
-            <a class="tab-item" href="#/tab/manage">
+            <a class="tab-item" href="#/tab/history">
                 <i class="icon ion-chatboxes"></i>
-
             </a>
         </div>
     </div>

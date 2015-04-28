@@ -6,119 +6,113 @@
                 on-refresh="doRefresh()">
         </ion-refresher>
         <!-- end of refresher -->
-        <div class="list margin-top">
+        <div class="list list-inset margin-top">
+            <div class="text-center padding">
+                <button ng-if="isDisableBid === false" class="button button-block button-positive" ng-click="newBid()">
+                    Gửi báo giá
+                </button>
+                <button ng-if="isDisableBid === true" class="button button-block button-stable disabled">
+                    Đã báo giá
+                </button>
+            </div>
             <div class="item item-divider">
                 Thông tin hàng hóa
             </div>
-            <div class="padding">
-                <div class="item item-image image" ng-if="type.stuffImagePath.length">
+            <div class="item padding">
+                <div class="item item-image image" ng-if="requestDetail.stuffImagePath.length">
                     <!-- Image -->
-                    <img  ng-src="{{type.stuffImagePath}}">
+                    <img ng-src="{{requestDetail.stuffImagePath}}">
                     <!-- end of image -->
                 </div>
             </div>
             <label class="item">
                 Mô tả
 				<span class="item-note item-text-wrap">
-					{{type.description}}
+					{{requestDetail.description}}
 				</span>
             </label>
             <label class="item">
                 Chủng loại hàng
 				<span class="item-note">
-					{{type.feature}}
+					{{requestDetail.feature}}
 				</span>
             </label>
             <label class="item">
                 Loại xe
 				<span class="item-note">
-					{{getVehicles(type.vehicleType)}}
+					{{getVehicles(requestDetail.vehicleType)}}
 				</span>
             </label>
             <label class="item">
                 Kích thước
 				<span class="item-note">
-					{{type.length}}x{{type.width}}x{{type.height}}
+					{{requestDetail.length}}x{{requestDetail.width}}x{{requestDetail.height}}
 				</span>
             </label>
             <label class="item">
                 Cân nặng
 				<span class="item-note">
-					{{type.weight}}
+					{{requestDetail.weight}}
 				</span>
             </label>
             <label class="item">
                 Địa chỉ gửi
 				<span class="item-note item-text-wrap">
-					{{type.sendAddress}}
+					{{requestDetail.pickupAddress}}
 				</span>
             </label>
             <label class="item">
                 Địa chỉ nhận
 				<span class="item-note item-text-wrap">
-					{{type.receiveAddress}}
+					{{requestDetail.receiveAddress}}
 				</span>
             </label>
         </div>
 
-        <div class="list margin-top">
+        <div class="list list-inset margin-top">
             <div class="item item-divider">
                 Thông tin người nhận
             </div>
             <label class="item">
                 Họ tên
 				<span class="item-note">
-					{{type.receiverName}}
+					{{requestDetail.receiverName}}
 				</span>
             </label>
             <label class="item">
                 Giới tính
 				<span class="item-note">
-					{{getGender(type.receiverGender)}}
+					{{getGender(requestDetail.receiverGender)}}
 				</span>
             </label>
 
             <label class="item">
                 Ngày nhận
 				<span class="item-note">
-					{{type.receiverDatetime}}
+					{{requestDetail.receiverDatetime}}
 				</span>
             </label>
             <label class="item">
                 Số điện thoại
 				<span class="item-note">
-					{{type.receiverPhone}}
+					{{requestDetail.receiverPhone}}
 				</span>
             </label>
             <label class="item">
                 Số CMT
 				<span class="item-note">
-					{{type.receiverIdentify}}
+					{{requestDetail.receiverIdentify}}
 				</span>
             </label>
-            <div class="padding">
-                <div class="item item-image image" ng-if="type.receiverImagePath.length">
+
+            <div class="item padding">
+                <div class="item item-image image" ng-if="requestDetail.receiverImagePath.length">
                     <!-- Image -->
-                    <img  ng-src="{{type.receiverImagePath}}">
+                    <img ng-src="{{requestDetail.receiverImagePath}}">
                     <!-- end of image -->
                 </div>
             </div>
         </div>
-        <div class="text-center padding">
-            <button class="button button-small button-assertive" ng-click="cancel()">
-                Hủy giao dịch
-            </button>
-        </div>
-        </div>
-        <!-- Request list -->
-
-        <div ng-include="'templates/request_tab1.html'" class="padding-vertical">
-        </div><!-- end of request list -->
-
-        <!-- Load more scroll -->
-        <ion-infinite-scroll ng-if='moreDataCanBeLoaded' on-infinite="loadMoreData()" icon="ion-loading-c" distance="1%">
-        </ion-infinite-scroll>
-        <!-- end of scroll -->
 
     </ion-content>
 

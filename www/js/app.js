@@ -70,12 +70,12 @@ angular.module('driver2way', ['ionic', 'ui.router', 'globaltpl', 'driver2way.con
                 }
             })
 
-            .state('tab.manage', {
-                url: '/manage',
+            .state('tab.history', {
+                url: '/history',
                 views: {
                     'menuContent': {
-                        templateUrl: 'templates/manage.html',
-                        controller: 'ManageCtrl'
+                        templateUrl: 'templates/history.html',
+                        controller: 'HistoryCtrl'
                     }
                 }
             })
