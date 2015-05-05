@@ -14,17 +14,33 @@
             </select>
         </label>
 
-        <div ng-if="selected.id === 0 || selected.id === 5" ng-include="'templates/trans_tab1.html'"
-             class="padding-vertical">
-        </div>
-        <!-- end of request list -->
+        <div class="padding-vertical">
+            <!-- Notification for no request -->
+            <div class="list list-inset" ng-if="!historyRequests.length">
+                <div class="item item-text-wrap text-center">
+                    Chưa có giao dịch nào
+                </div>
+            </div>
+            <!-- end of notification -->
 
-        <div ng-if="selected.id === 1" ng-include="'templates/trans_tab2.html'" class="padding-vertical">
-        </div>
-        <!-- end of request list -->
-
-        <div ng-if="selected.id === 2 ||selected.id === 3 || selected.id === 4" ng-include="'templates/trans_tab3.html'"
-             class="padding-vertical">
+            <!-- Request list -->
+            <div class="list list-inset" ng-repeat="historyRequest in historyRequests" ng-click="goDetail(historyRequest)">
+                <div class="item item-divider balanced-bg balanced-border" ng-if="historyRequest.requestStatus == 4">
+                    <span>Thành công</span>
+                </div>
+                <div class="item item-divider assertive-bg assertive-border" ng-if="historyRequest.requestStatus == 5">
+                    <span>Thất bại</span>
+                </div>
+                <div class="item">
+                    <label>{{historyRequest.description}}</label>
+                </div>
+                <div class="item">
+                    <label>Từ: {{historyRequest.pickupLocation}}</label>
+                </div>
+                <div class="item">
+                    <label>Đến: {{historyRequest.receiveLocation}}</label>
+                </div>
+            </div>
         </div>
         <!-- end of request list -->
 

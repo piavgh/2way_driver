@@ -19,6 +19,10 @@ angular.module('driver2way.controllers', [])
             icon: 'ion-filing'
         }];
 
+        $scope.driverName = window.localStorage["fullName"] === undefined ? "" : window.localStorage["fullName"];
+
+        $scope.driverAvatar = window.localStorage["avatar"] === undefined ? "" : window.localStorage["avatar"];
+
         $scope.exitApp = function () {
             $ionicPopup.show({
                 title: 'Thông báo',
@@ -42,7 +46,7 @@ angular.module('driver2way.controllers', [])
 
     })
 
-    .controller('LoginCtrl', function ($scope, $state, GlobalTpl, $rootScope, $http, $cordovaDevice, $cordovaNetwork) {
+    .controller('LoginCtrl', function ($scope, $state, GlobalTpl, $rootScope, $http, $cordovaDevice) {
         //if ($cordovaNetwork.getNetwork() === 'none') {
         //    $ionicPopup.alert({
         //        title: 'Lỗi kết nối !',
@@ -55,28 +59,28 @@ angular.module('driver2way.controllers', [])
         //        // Get UUID device
         //        window.localStorage['deviceID'] = $cordovaDevice.getUUID();
         //    }
-        //
-        //    $scope.deviceID = window.localStorage['deviceID'];
-        //
-        //    if (window.localStorage['loggedIn'] === "true") {
-        //        var options = {
-        //            showLoad: true,
-        //            method: 'get',
-        //            url: $rootScope.config.url + "/drivers/"
-        //            + window.localStorage['driverId'] + "/transactions?page=1&type=working"
-        //        };
-        //
-        //        GlobalTpl.request(options, function (response) {
-        //
-        //            if (response.data && response.data.length > 0) {
-        //                $state.go('tab.working');
-        //            } else {
-        //                $state.go('tab.chance');
-        //            }
-        //        }, function () {
-        //
-        //        });
-        //    }
+
+        //$scope.deviceID = window.localStorage['deviceID'];
+
+        if (window.localStorage['loggedIn'] === "true") {
+            var options = {
+                showLoad: true,
+                method: 'get',
+                url: $rootScope.config.url + "/drivers/"
+                + window.localStorage['driverId'] + "/transactions?page=1&type=working"
+            };
+
+            GlobalTpl.request(options, function (response) {
+
+                if (response.data && response.data.length > 0) {
+                    $state.go('tab.working');
+                } else {
+                    $state.go('tab.chance');
+                }
+            }, function () {
+
+            });
+        }
 
         $scope.loginForm = {
             username: '',
@@ -108,6 +112,7 @@ angular.module('driver2way.controllers', [])
                         window.localStorage['driverId'] = response.data.driverId;
                         window.localStorage['username'] = response.data.username;
                         window.localStorage['fullName'] = response.data.fullName;
+                        window.localStorage['avatar'] = response.data.avatar;
                         $state.go('tab.chance');
                     } else {
                         GlobalTpl.showAlert({template: "Sai tài khoản hoặc mật khẩu"});
@@ -262,8 +267,91 @@ angular.module('driver2way.controllers', [])
         }
     })
 
-    .controller('HistoryCtrl', function ($scope, $location, $rootScope) {
+    .controller('HistoryCtrl', function ($scope, $location, $rootScope, GlobalTpl) {
+        $scope.values = [{
+            id: 0,
+            name: 'Tất cả',
+            type: "all"
+        }, {
+            id: 1,
+            name: 'Giao dịch thành công',
+            type: "success"
+        }, {
+            id: 2,
+            name: 'Giao dịch thất bại',
+            type: "fail"
+        }];
 
+        $scope.selected = $scope.values[0];
+        $scope.historyRequests = [];
+        $scope.page = 1;
+        $scope.moreDataCanBeLoaded = false;
+        $scope.type = 'all';
+        $scope.first = true;
+
+        $scope.doRefresh = function () {
+            $scope.first = false;
+            $scope.page = 1;
+            $scope.historyRequests = [];
+            LoadMainRequest($scope.type);
+        };
+
+        $scope.loadMoreData = function () {
+            LoadMainRequest($scope.type);
+        };
+
+        $scope.loadData = function (type) {
+            $scope.historyRequests = [];
+            $scope.page = 1;
+            $scope.type = type;
+            LoadMainRequest(type);
+            $scope.first = false;
+        }
+
+        function LoadMainRequest(type) {
+            var options = {
+                showLoad: true,
+                showAlert: true,
+                method: 'get',
+                url: $rootScope.config.url + "/drivers/"
+                + window.localStorage['driverId'] + "/transactions?page="
+                + $scope.page + "&type=" + type
+            };
+
+            GlobalTpl.request(options, function (response) {
+                // Check there is existing data to load
+                $scope.moreDataCanBeLoaded =
+                    (response && response.data && response.data.length > 0) ? true : false;
+
+                if (response.data && response.data.length > 0) {
+
+                    // Fetch new requests
+                    for (var i in response.data) {
+                        var res = response.data[i];
+                        $scope.historyRequests.push({
+                            requestId: res.detail.id,
+                            description: res.detail.description,
+                            requestStatus: res.detail.status,
+                            createdAt: (res.detail.createdAt === undefined) ? '' : res.detail.createdAt,
+                            pickupLocation: res.location[0].address,
+                            receiveLocation: res.location[1].address
+                        });
+                    }
+                    $scope.page++;
+                }
+            }, function () {
+                // Stop the ion-refresher from spinning
+                $scope.$broadcast('scroll.refreshComplete');
+                $scope.$broadcast('scroll.infiniteScrollComplete');
+            });
+        }
+
+        if ($scope.first === true) {
+            LoadMainRequest($scope.type);
+        }
+        $scope.goDetail = function (historyRequest) {
+            $location.path("/tab/requestDetail/" + historyRequest.requestId);
+        }
     })
 
     .controller('RequestDetailCtrl', function ($scope, $stateParams, $rootScope, $http, GlobalTpl, $ionicModal) {
