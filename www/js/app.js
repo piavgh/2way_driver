@@ -90,6 +90,26 @@ angular.module('driver2way', ['ionic', 'ui.router', 'globaltpl', 'driver2way.con
                 }
             })
 
+            .state('tab.cardCharge', {
+                url: '/cardCharge',
+                views: {
+                    'menuContent': {
+                        templateUrl: 'templates/cardCharge.html',
+                        controller: 'CardChargeCtrl'
+                    }
+                }
+            })
+
+            .state('tab.cardManage', {
+                url: '/cardManage',
+                views: {
+                    'menuContent': {
+                        templateUrl: 'templates/cardManage.html',
+                        controller: 'CardManageCtrl'
+                    }
+                }
+            })
+
             .state('tab.about', {
                 url: '/about',
                 views: {
@@ -100,6 +120,6 @@ angular.module('driver2way', ['ionic', 'ui.router', 'globaltpl', 'driver2way.con
             })
 
         // if none of the above states are matched, use this as the fallback
-        $urlRouterProvider.otherwise('/tab/chance');
+        $urlRouterProvider.otherwise('/login');
 
     });

@@ -15,13 +15,12 @@
     "shelljs": "^0.3.0"
   },
   "cordovaPlugins": [
-    "org.apache.cordova.device",
     "org.apache.cordova.console",
     "com.ionic.keyboard",
-    "org.apache.cordova.network-information"
+    "org.apache.cordova.network-information",
+    "org.apache.cordova.device"
   ],
   "cordovaPlatforms": [
-    "android",
-    "ios"
+    "android"
   ]
 }

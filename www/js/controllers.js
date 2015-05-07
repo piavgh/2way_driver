@@ -17,6 +17,14 @@ angular.module('driver2way.controllers', [])
             href: '#/tab/history',
             title: 'Lịch sử giao dịch',
             icon: 'ion-filing'
+        }, {
+            href: '#/tab/cardCharge',
+            title: 'Nạp tiền ảo',
+            icon: 'ion-card'
+        }, {
+            href: '#/tab/cardManage',
+            title: 'Quản lý tiền ảo',
+            icon: 'ion-cash'
         }];
 
         $scope.driverName = window.localStorage["fullName"] === undefined ? "" : window.localStorage["fullName"];
@@ -46,90 +54,92 @@ angular.module('driver2way.controllers', [])
 
     })
 
-    .controller('LoginCtrl', function ($scope, $state, GlobalTpl, $rootScope, $http, $cordovaDevice) {
-        //if ($cordovaNetwork.getNetwork() === 'none') {
-        //    $ionicPopup.alert({
-        //        title: 'Lỗi kết nối !',
-        //        content: '<div class="only-text">Vui lòng bật Wifi hoặc 3G để sử dụng ứng dụng</div>'
-        //    }).then(function (result) {
-        //        navigator.app.exitApp();
-        //    });
-        //} else {
-        //    if (window.localStorage['deviceID'] === undefined) {
-        //        // Get UUID device
-        //        window.localStorage['deviceID'] = $cordovaDevice.getUUID();
-        //    }
+    .controller('LoginCtrl', function ($scope, $state, $ionicPlatform, GlobalTpl, $rootScope, $http, $cordovaNetwork, $cordovaDevice) {
+        $ionicPlatform.ready(function () {
 
-        //$scope.deviceID = window.localStorage['deviceID'];
-
-        if (window.localStorage['loggedIn'] === "true") {
-            var options = {
-                showLoad: true,
-                method: 'get',
-                url: $rootScope.config.url + "/drivers/"
-                + window.localStorage['driverId'] + "/transactions?page=1&type=working"
-            };
-
-            GlobalTpl.request(options, function (response) {
-
-                if (response.data && response.data.length > 0) {
-                    $state.go('tab.working');
+                if ($cordovaNetwork.getNetwork() === 'none') {
+                    $ionicPopup.alert({
+                        title: 'Lỗi kết nối !',
+                        content: '<div class="only-text">Vui lòng bật Wifi hoặc 3G để sử dụng ứng dụng</div>'
+                    }).then(function (result) {
+                        navigator.app.exitApp();
+                    });
                 } else {
-                    $state.go('tab.chance');
-                }
-            }, function () {
-
-            });
-        }
-
-        $scope.loginForm = {
-            username: '',
-            password: ''
-        };
-
-        function validForm() {
-            if (!$scope.loginForm.username || typeof $scope.loginForm.username === 'undefined' || !$scope.loginForm.password || typeof $scope.loginForm.password === 'undefined') {
-                return false;
-            }
-            return true;
-        }
-
-        $scope.doLogin = function () {
-            if (!validForm()) {
-                $scope.formWarning = "Vui lòng nhập đầy đủ thông tin";
-            } else {
-                $scope.formWarning = "";
-                var options = {
-                    showLoad: true,
-                    method: 'get',
-                    url: $rootScope.config.url + '/drivers/login?username=' + $scope.loginForm.username + "&password=" + $scope.loginForm.password
-                };
-                GlobalTpl.showLoading();
-                $http(options).success(function (response) {
-                    GlobalTpl.hideLoading();
-                    if (response.errorCode === 0) {
-                        window.localStorage['loggedIn'] = true;
-                        window.localStorage['driverId'] = response.data.driverId;
-                        window.localStorage['username'] = response.data.username;
-                        window.localStorage['fullName'] = response.data.fullName;
-                        window.localStorage['avatar'] = response.data.avatar;
-                        $state.go('tab.chance');
-                    } else {
-                        GlobalTpl.showAlert({template: "Sai tài khoản hoặc mật khẩu"});
+                    if (window.localStorage['deviceID'] === undefined) {
+                        // Get UUID device
+                        window.localStorage['deviceID'] = $cordovaDevice.getUUID();
                     }
-                }).error(function () {
-                    GlobalTpl.hideLoading();
-                    GlobalTpl.showAlert({template: "Vui lòng thử lại"});
-                }).finally(function () {
-                });
-            }
-        }
-    }
-    //}
-)
 
-    .
-    controller('WorkingCtrl', function ($scope, $location, $rootScope, GlobalTpl) {
+                    $scope.deviceID = window.localStorage['deviceID'];
+
+                    if (window.localStorage['loggedIn'] === "true") {
+                        var options = {
+                            showLoad: true,
+                            method: 'get',
+                            url: $rootScope.config.url + "/drivers/"
+                            + window.localStorage['driverId'] + "/transactions?page=1&type=working"
+                        };
+
+                        GlobalTpl.request(options, function (response) {
+
+                            if (response.data && response.data.length > 0) {
+                                $state.go('tab.working');
+                            } else {
+                                $state.go('tab.chance');
+                            }
+                        }, function () {
+
+                        });
+                    }
+
+                    $scope.loginForm = {
+                        username: '',
+                        password: ''
+                    };
+
+                    function validForm() {
+                        if (!$scope.loginForm.username || typeof $scope.loginForm.username === 'undefined' || !$scope.loginForm.password || typeof $scope.loginForm.password === 'undefined') {
+                            return false;
+                        }
+                        return true;
+                    }
+
+                    $scope.doLogin = function () {
+                        if (!validForm()) {
+                            $scope.formWarning = "Vui lòng nhập đầy đủ thông tin";
+                        } else {
+                            $scope.formWarning = "";
+                            var options = {
+                                showLoad: true,
+                                method: 'get',
+                                url: $rootScope.config.url + '/drivers/login?username=' + $scope.loginForm.username + "&password=" + $scope.loginForm.password
+                            };
+                            GlobalTpl.showLoading();
+                            $http(options).success(function (response) {
+                                GlobalTpl.hideLoading();
+                                if (response.errorCode === 0) {
+                                    window.localStorage['loggedIn'] = true;
+                                    window.localStorage['driverId'] = response.data.driverId;
+                                    window.localStorage['username'] = response.data.username;
+                                    window.localStorage['fullName'] = response.data.fullName;
+                                    window.localStorage['avatar'] = response.data.avatar;
+                                    $state.go('tab.chance');
+                                } else {
+                                    GlobalTpl.showAlert({template: "Sai tài khoản hoặc mật khẩu"});
+                                }
+                            }).error(function () {
+                                GlobalTpl.hideLoading();
+                                GlobalTpl.showAlert({template: "Vui lòng thử lại"});
+                            }).finally(function () {
+                            });
+                        }
+                    }
+                }
+            }
+        );
+    })
+
+    .controller('WorkingCtrl', function ($scope, $location, $rootScope, GlobalTpl) {
         $scope.workingRequests = [];
         $scope.page = 1;
         $scope.moreDataCanBeLoaded = false;
@@ -504,6 +514,14 @@ angular.module('driver2way.controllers', [])
         }
 
         LoadDetail();
+    })
+
+    .controller('CardChargeCtrl', function ($scope, $stateParams, $rootScope, $http, GlobalTpl) {
+
+    })
+
+    .controller('CardManageCtrl', function ($scope, $stateParams, $rootScope, $http, GlobalTpl) {
+
     })
 
     .controller('ProfileCtrl', function ($scope, $state, GlobalTpl, $rootScope) {

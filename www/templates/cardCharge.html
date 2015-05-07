@@ -1,0 +1,64 @@
+<ion-view view-title="Nạp tiền ảo" align-title="center">
+    <ion-content class="has-header text-left padding">
+
+        <div class="list" style="margin-top: 100px">
+            <div class="item item-divider energized">
+                Điền các thông tin bên dưới
+            </div>
+            <div class="item item-text-wrap">
+                Loại mạng
+            </div>
+            <div class="list">
+                <label class="item item-radio">
+                    <input type="radio" name="telco">
+
+                    <div class="item-content">
+                        Viettel
+                    </div>
+                    <i class="radio-icon ion-checkmark"></i>
+                </label>
+                <label class="item item-radio">
+                    <input type="radio" name="telco">
+
+                    <div class="item-content">
+                        Vinaphone
+                    </div>
+                    <i class="radio-icon ion-checkmark"></i>
+                </label>
+                <label class="item item-radio">
+                    <input type="radio" name="telco">
+
+                    <div class="item-content">
+                        Mobifone
+                    </div>
+                    <i class="radio-icon ion-checkmark"></i>
+                </label>
+            </div>
+            <div class="item item-text-wrap">
+                Mã PIN
+            </div>
+            <div class="item item-input-inset">
+                <label class="item-input-wrapper">
+                    <input type="password" placeholder="" ng-model="cardChargeForm.pin">
+                </label>
+            </div>
+            <div class="item item-text-wrap">
+                Số serial
+            </div>
+            <div class="item item-input-inset">
+
+                <label class="item-input-wrapper">
+                    <input type="password" placeholder="" ng-model="cardChargeForm.serial">
+                </label>
+            </div>
+        </div>
+        <div ng-bind="formWarning" class="assertive text-center padding"></div>
+        <div class="padding">
+            <button class="button button-block button-assertive" ng-click="doCardCharge()">
+                Nạp tiền
+            </button>
+        </div>
+
+    </ion-content>
+
+</ion-view>
