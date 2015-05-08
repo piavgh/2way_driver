@@ -168,7 +168,7 @@ angular.module('driver2way.controllers', [])
                 showLoad: true,
                 showAlert: true,
                 method: 'get',
-                url: $rootScope.config.url + "/drivers/1/transactions?page=" + $scope.page + "&type=working"
+                url: $rootScope.config.url + "/drivers/" + localStorage.driverId + "/transactions?page=" + $scope.page + "&type=working"
             };
 
             GlobalTpl.request(options, function (response) {
@@ -324,7 +324,7 @@ angular.module('driver2way.controllers', [])
                 showAlert: true,
                 method: 'get',
                 url: $rootScope.config.url + "/drivers/"
-                + window.localStorage['driverId'] + "/transactions?page="
+                + localStorage.driverId + "/transactions?page="
                 + $scope.page + "&type=" + type
             };
 
@@ -516,8 +516,70 @@ angular.module('driver2way.controllers', [])
         LoadDetail();
     })
 
-    .controller('CardChargeCtrl', function ($scope, $stateParams, $rootScope, $http, GlobalTpl) {
+    .controller('CardChargeCtrl', function ($scope, $state, $ionicPlatform, GlobalTpl, $rootScope, $http, $cordovaNetwork, $cordovaDevice) {
+        $ionicPlatform.ready(function () {
 
+                if ($cordovaNetwork.getNetwork() === 'none') {
+                    $ionicPopup.alert({
+                        title: 'Lỗi kết nối !',
+                        content: '<div class="only-text">Vui lòng bật Wifi hoặc 3G để sử dụng ứng dụng</div>'
+                    }).then(function (result) {
+                        navigator.app.exitApp();
+                    });
+                } else {
+
+                    $scope.cardChargeForm = {
+                        telco: '',
+                        pin: '',
+                        serial: ''
+                    };
+
+                    function validForm() {
+                        if (!$scope.cardChargeForm.pin || typeof $scope.cardChargeForm.pin === 'undefined' || !$scope.cardChargeForm.serial || typeof $scope.cardChargeForm.serial === 'undefined') {
+                            return false;
+                        }
+                        return true;
+                    }
+
+                    $scope.doCardCharge = function () {
+                        if (!validForm()) {
+                            $scope.formWarning = "Vui lòng nhập đầy đủ thông tin";
+                        } else {
+                            $scope.formWarning = "";
+                            $scope.cardChargeData = {
+                                driverId: localStorage.driverId,
+                                type: $scope.cardChargeForm.telco,
+                                pin: $scope.cardChargeForm.pin,
+                                serial: $scope.cardChargeForm.serial
+                            }
+                            var cardChargeData = JSON.stringify($scope.cardChargeData);
+                            var options = {
+                                showLoad: true,
+                                method: 'post',
+                                url: $rootScope.config.url + '/card_charges',
+                                data: cardChargeData,
+                                headers: {
+                                    'Content-Type': undefined
+                                }
+                            };
+                            GlobalTpl.showLoading();
+                            $http(options).success(function (response) {
+                                GlobalTpl.hideLoading();
+                                if (response.errorCode === 0) {
+                                    GlobalTpl.showAlert({template: response.userMessage});
+                                } else {
+                                    GlobalTpl.showAlert({template: response.userMessage});
+                                }
+                            }).error(function (response) {
+                                GlobalTpl.hideLoading();
+                                GlobalTpl.showAlert({template: response.userMessage});
+                            }).finally(function () {
+                            });
+                        }
+                    }
+                }
+            }
+        );
     })
 
     .controller('CardManageCtrl', function ($scope, $stateParams, $rootScope, $http, GlobalTpl) {
@@ -562,8 +624,7 @@ angular.module('driver2way.controllers', [])
         function LoadMainRequest() {
             var options = {
                 method: 'get',
-                //url: $rootScope.config.url + "/drivers/" + window.localStorage['driverId']
-                url: $rootScope.config.url + "/drivers/" + "1"
+                url: $rootScope.config.url + "/drivers/" + window.localStorage["driverId"]
             }
 
             GlobalTpl.request(options, function (response) {
@@ -575,26 +636,26 @@ angular.module('driver2way.controllers', [])
                         id: res.id,
                         username: res.username,
                         fullName: res.fullName,
-                        phoneNumber: res.phone,
-                        email: res.email,
-                        deviceId: res.deviceId,
-                        avatarPath: res.avatarPath,
+                        phoneNumber: (!res.phone) ? "" : res.phone,
+                        email: (!res.email) ? "" : res.email,
+                        deviceId: (!res.deviceId) ? "" : res.deviceId,
+                        avatarPath: (!res.avatarPath) ? "" : res.avatarPath,
                         identifyCard: res.identifyCard,
                         identifyCardDate: res.identifyCardDate.substring(0, 10),
                         identifyCardPlace: res.identifyCardPlace,
                         identifyCardFront: res.identifyCardFront,
                         identifyCardBack: res.identifyCardBack,
-                        starRating: res.rating,
-                        numTransactions: res.numTransactions,
-                        numSuccessTransactions: res.numSuccessTransactions,
+                        starRating: (!res.rating) ? "" : res.rating,
+                        numTransactions: (!res.numTransactions) ? "" : res.numTransactions,
+                        numSuccessTransactions: (!res.numSuccessTransactions) ? "" : res.numSuccessTransactions,
                         license: res.license,
                         licenseType: res.licenseType,
                         licenseStart: res.licenseStart.substring(0, 10),
                         licenseEnd: res.licenseEnd.substring(0, 10),
-                        minWeight: res.minWeight,
-                        maxWeight: res.maxWeight,
+                        minWeight: (!res.minWeight) ? "" : res.minWeight,
+                        maxWeight: (!res.maxWeight) ? "" : res.maxWeight,
                         sex: (res.sex = 1) ? "Nam" : "Nữ",
-                        coin: res.coin
+                        coin: (!res.coin) ? "" : res.coin
                     };
                 }
             }, function () {
@@ -612,7 +673,7 @@ angular.module('driver2way.controllers', [])
                 showAlert: (typeof opts.showAlert === 'undefined') ? true : opts.showAlert,
                 method: (typeof opts.method === 'undefined') ? 'get' : opts.method,
                 url: (typeof opts.url === 'undefined')
-                    ? ($rootScope.config.url + "/driver_rates/" + 1 + "?page=" + $scope.page)
+                    ? ($rootScope.config.url + "/driver_rates/" + window.localStorage["driverId"] + "?page=" + $scope.page)
                     : opts.url
             };
 
