@@ -18,7 +18,8 @@
     "org.apache.cordova.console",
     "com.ionic.keyboard",
     "org.apache.cordova.network-information",
-    "org.apache.cordova.device"
+    "org.apache.cordova.device",
+    "org.apache.cordova.geolocation"
   ],
   "cordovaPlatforms": [
     "android"
