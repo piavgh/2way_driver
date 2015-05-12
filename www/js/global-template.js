@@ -4,7 +4,7 @@ angular.module('globaltpl', [])
 
             function showLoading() {
                 $ionicLoading.show({
-                    template: 'Loading ...'
+                    template: 'Vui lòng chờ ...'
                 });
             }
 

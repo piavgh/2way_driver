@@ -51,107 +51,102 @@ angular.module('driver2way.controllers', [])
             });
         }
 
-        $ionicPlatform.ready(function () {
-            //
-            function sendDriverLocation(lat, lng) {
-                $scope.driverLocationData = {
-                    driverId: localStorage.driverId,
-                    lat: lat,
-                    lng: lng,
-                    vehicleStatus: 1
+        $scope.defaultPosition = {lat: 21.0275436, lng: 105.7926965};
+        $scope.defaultPosition.lat = localStorage.driverPositionLat;
+        $scope.defaultPosition.lng = localStorage.driverPositionLng;
+        var curLat = $scope.defaultPosition.lat;
+        var curLng = $scope.defaultPosition.lng;
+        var currentPosition;
+
+        function sendDriverLocation(lat, lng) {
+            $scope.driverLocationData = {
+                driverId: localStorage.driverId,
+                lat: lat,
+                lng: lng,
+                vehicleStatus: 1
+            }
+            var driverLocationData = JSON.stringify($scope.driverLocationData);
+            var options = {
+                showLoad: true,
+                method: 'post',
+                url: $rootScope.config.url + '/driver_locations',
+                data: driverLocationData,
+                headers: {
+                    'Content-Type': undefined
                 }
-                var driverLocationData = JSON.stringify($scope.driverLocationData);
-                var options = {
-                    showLoad: true,
-                    method: 'post',
-                    url: $rootScope.config.url + '/driver_locations',
-                    data: driverLocationData,
-                    headers: {
-                        'Content-Type': undefined
-                    }
-                };
+            };
 
-                GlobalTpl.request(options, function (response) {
-                    if (response.errorCode == 0) {
+            GlobalTpl.request(options, function (response) {
+                if (response.errorCode == 0) {
 
-                    }
-                    else {
+                }
+                else {
 
-                    }
-                }, function () {
-                });
+                }
+            }, function () {
+            });
+        }
+
+        $ionicPlatform.ready(function () {
+
+            $cordovaGeolocation.getCurrentPosition({timeout: 10000, enableHighAccuracy: true});
+
+            $rootScope.bgGeo = window.plugins.backgroundGeoLocation;
+
+            var bgGeo = $rootScope.bgGeo;
+
+            var yourAjaxCallback = function (response) {
+                bgGeo.finish();
+            };
+
+            var callbackFn = function (location) {
+                curLat = location.latitude;
+                curLng = location.longitude;
+                localStorage.driverLat = curLat;
+                localStorage.driverLng = curLng;
+                sendDriverLocation(location.latitude, location.longitude);
+                yourAjaxCallback.call(this);
             }
 
+            var failureFn = function (error) {
+                console.log('BackgroundGeoLocation error');
+            }
+
+            bgGeo.configure(callbackFn, failureFn, {
+                url: $rootScope.config.url + '/android_driver_locations', // <-- Android ONLY:  your server url to send locations to
+                params: {
+                    driverId: localStorage.driverId,    //  <-- Android ONLY:  HTTP POST params sent to your server when persisting locations.
+                    vehicleStatus: 1
+                },
+                headers: {                                   // <-- Android ONLY:  Optional HTTP headers sent to your configured #url when persisting locations
+
+                },
+                desiredAccuracy: 10,
+                stationaryRadius: 20,
+                distanceFilter: 30,
+                notificationTitle: '2Way Background tracking', // <-- android only, customize the title of the notification
+                notificationText: 'Đã bật', // <-- android only, customize the text of the notification
+                activityType: 'AutomotiveNavigation',
+                debug: true, // <-- enable this hear sounds for background-geolocation life-cycle.
+                stopOnTerminate: true // <-- enable this to clear background location settings when the app terminates
+            });
+
+            // Turn ON the background-geolocation system.  The user will be tracked whenever they suspend the app.
+            bgGeo.start();
+
             setInterval(function () {
-                $cordovaGeolocation.getCurrentPosition({ timeout: 10000, enableHighAccuracy: true })
+                $cordovaGeolocation.getCurrentPosition({timeout: 10000, enableHighAccuracy: true})
                     .then(function (position) {
-                        sendDriverLocation(position.coords.latitude, position.coords.longitude);
+                        var curLat  = position.coords.latitude;
+                        var curLng = position.coords.longitude;
+                        localStorage.driverLat = curLat;
+                        localStorage.driverLng = curLng;
+                        sendDriverLocation(curLat, curLng);
                     }, function(err) {
-                        $ionicPopup.show({
-                            title: 'Thông báo',
-                            template: '<div class="text-center">Vui lòng bật GPS. Ứng dụng sẽ tự động thoát</div>',
-                            buttons: [{
-                                text: 'Đóng',
-                                type: 'button-positive',
-                                onTap: function(e) {
-                                    navigator.app.exitApp();
-                                }
-                            }]
-                        });
+                        //GlobalTpl.showAlert({template: "Lỗi Geolocation"})
                     });
-            }, 3000);
+            }, 30000);
         });
-        //$ionicPlatform.ready(function () {
-        //setTimeout(function () {
-        //    window.navigator.geolocation.getCurrentPosition(function (location) {
-        //        console.log('Location from Ionic');
-        //    });
-        //
-        //    $rootScope.bgGeo = window.plugins.backgroundGeoLocation;
-        //
-        //    var bgGeo = $rootScope.bgGeo;
-        //
-        //    var yourAjaxCallback = function (response) {
-        //        bgGeo.finish();
-        //    };
-        //
-        //    var callbackFn = function (location) {
-        //        currentLat = location.latitude;
-        //        currentLng = location.longitude;
-        //        localStorage.driverPositionLat = currentLat;
-        //        localStorage.driverPositionLng = currentLng;
-        //        sendDriverLocation(location.latitude, location.longitude);
-        //        yourAjaxCallback.call(this);
-        //    }
-        //
-        //    var failureFn = function (error) {
-        //        console.log('BackgroundGeoLocation error');
-        //    }
-        //
-        //    bgGeo.configure(callbackFn, failureFn, {
-        //        url: $rootScope.config.url + '/driver_locations', // <-- Android ONLY:  your server url to send locations to
-        //        params: {
-        //            driverId: localStorage.driverId,    //  <-- Android ONLY:  HTTP POST params sent to your server when persisting locations.
-        //            currentLat: localStorage.driverPositionLat,                           //  <-- Android ONLY:  HTTP POST params sent to your server when persisting locations.
-        //            currentLng: localStorage.driverPositionLng,
-        //            vehicleStatus: 1
-        //        },
-        //        headers: {                                   // <-- Android ONLY:  Optional HTTP headers sent to your configured #url when persisting locations
-        //
-        //        },
-        //        desiredAccuracy: 10,
-        //        stationaryRadius: 20,
-        //        distanceFilter: 30,
-        //        notificationTitle: 'Background tracking', // <-- android only, customize the title of the notification
-        //        notificationText: 'ENABLED', // <-- android only, customize the text of the notification
-        //        activityType: 'AutomotiveNavigation',
-        //        debug: true, // <-- enable this hear sounds for background-geolocation life-cycle.
-        //        stopOnTerminate: false // <-- enable this to clear background location settings when the app terminates
-        //    });
-        //
-        //    // Turn ON the background-geolocation system.  The user will be tracked whenever they suspend the app.
-        //    bgGeo.start();
-        //}, 3000);
     })
 
     .controller('LoginCtrl', function ($scope, $state, $ionicPlatform, GlobalTpl, $rootScope, $http, $cordovaNetwork, $cordovaDevice) {
@@ -518,7 +513,7 @@ angular.module('driver2way.controllers', [])
             } else {
                 $scope.formWarning = "";
                 $scope.data = {
-                    driverId: 1,
+                    driverId: localStorage.driverId,
                     requestId: $scope.id,
                     price: $scope.sendBidForm.price,
                     transportAt: $scope.sendBidForm.transportAt,
