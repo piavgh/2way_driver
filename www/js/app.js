@@ -90,6 +90,26 @@ angular.module('driver2way', ['ionic', 'ui.router', 'globaltpl', 'driver2way.con
                 }
             })
 
+            .state('tab.workingDetail', {
+                url: '/workingDetail/:id',
+                views: {
+                    'menuContent': {
+                        templateUrl: 'templates/workingDetail.html',
+                        controller: 'WorkingDetailCtrl'
+                    }
+                }
+            })
+
+            .state('tab.historyDetail', {
+                url: '/historyDetail/:id',
+                views: {
+                    'menuContent': {
+                        templateUrl: 'templates/historyDetail.html',
+                        controller: 'HistoryDetailCtrl'
+                    }
+                }
+            })
+
             .state('tab.cardCharge', {
                 url: '/cardCharge',
                 views: {

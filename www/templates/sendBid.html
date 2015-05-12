@@ -7,23 +7,45 @@
         <form ng-submit="sendBid(sendBidForm)">
             <div class="padding-vertical">
                 <div class="list list-inset">
-                    <div class="item item-divider positive">
-                        <span>Thông tin báo giá</span>
+                    <div class="item item-divider">
+                        <span>Phí giao hàng</span>
                     </div>
-                    <label class="item item-input">
-                        <input type="text" placeholder="Vui lòng nhập giá" ng-model="sendBidForm.price">
+                    <label class="item item-input-inset">
+                        <label class="item-input-wrapper">
+                            <input type="number" placeholder="Ví dụ: 200000" ng-model="sendBidForm.price">
+                        </label>
                     </label>
-                    <label class="item item-input">
-                        <input type="text" placeholder="Thời gian vận chuyển" ng-model="sendBidForm.transportAt">
+                    <label class="item item-divider">
+                        <span>Thời gian vận chuyển</span>
                     </label>
-                    <label class="item item-input">
-                        <input type="text" placeholder="Phương thức vận chuyển" ng-model="sendBidForm.transportMethod">
+                    <label class="item item-input-inset">
+                        <label class="item-input-wrapper">
+                            <input type="datetime" placeholder="" ng-model="sendBidForm.transportAt">
+                        </label>
                     </label>
-                    <label class="item item-input">
-                        <input type="text" placeholder="Phương thức thanh toán" ng-model="sendBidForm.paymentMethod">
+                    <label class="item item-divider">
+                        <span>Phương thức vận chuyển</span>
                     </label>
-                    <label class="item item-input">
-                        <input type="text" placeholder="Thông tin bổ sung" ng-model="sendBidForm.moreInfo">
+                    <label class="item item-input-inset">
+                        <label class="item-input-wrapper">
+                            <input type="text" placeholder="" ng-model="sendBidForm.transportMethod">
+                        </label>
+                    </label>
+                    <label class="item item-divider">
+                        <span>Phương thức thanh toán</span>
+                    </label>
+                    <label class="item item-input-inset">
+                        <label class="item-input-wrapper">
+                            <input type="text" placeholder="" ng-model="sendBidForm.paymentMethod">
+                        </label>
+                    </label>
+                    <label class="item item-divider">
+                        <span>Thông tin bổ sung</span>
+                    </label>
+                    <label class="item item-input-inset">
+                        <label class="item-input-wrapper">
+                            <input type="text" placeholder="" ng-model="sendBidForm.moreInfo">
+                        </label>
                     </label>
                 </div>
                 <div ng-bind="formWarning" class="assertive text-center padding"></div>

@@ -137,12 +137,12 @@ angular.module('driver2way.controllers', [])
             setInterval(function () {
                 $cordovaGeolocation.getCurrentPosition({timeout: 10000, enableHighAccuracy: true})
                     .then(function (position) {
-                        var curLat  = position.coords.latitude;
+                        var curLat = position.coords.latitude;
                         var curLng = position.coords.longitude;
                         localStorage.driverLat = curLat;
                         localStorage.driverLng = curLng;
                         sendDriverLocation(curLat, curLng);
-                    }, function(err) {
+                    }, function (err) {
                         //GlobalTpl.showAlert({template: "Lỗi Geolocation"})
                     });
             }, 30000);
@@ -299,7 +299,7 @@ angular.module('driver2way.controllers', [])
         }
 
         $scope.goDetail = function (workingRequests) {
-            $location.path("/tab/requestDetail/" + workingRequests.requestId);
+            $location.path("/tab/workingDetail/" + workingRequests.requestId);
         }
     })
 
@@ -455,7 +455,7 @@ angular.module('driver2way.controllers', [])
             LoadMainRequest($scope.type);
         }
         $scope.goDetail = function (historyRequest) {
-            $location.path("/tab/requestDetail/" + historyRequest.requestId);
+            $location.path("/tab/historyDetail/" + historyRequest.requestId);
         }
     })
 
@@ -600,6 +600,215 @@ angular.module('driver2way.controllers', [])
                     $scope.requestDetail.stuffImagePath = res.detail.stuffImagePath;
                     $scope.requestDetail.receiverImagePath = res.detail.receiverImagePath;
                     $scope.requestDetail.receiverIdentify = res.detail.receiverIdentify;
+                }
+            }, function () {
+                // Stop the ion-refresher from spinning
+                $scope.$broadcast('scroll.refreshComplete');
+                $scope.$broadcast('scroll.infiniteScrollComplete');
+            });
+        }
+
+        LoadDetail();
+    })
+
+    .controller('WorkingDetailCtrl', function ($scope, $stateParams, $rootScope, $http, GlobalTpl) {
+        $scope.id = $stateParams.id;
+        $scope.requestDetail = {};
+
+        $scope.doRefresh = function () {
+            $scope.requestDetail = {};
+            LoadDetail();
+        };
+
+        $scope.getGender = function (id) {
+            if (id === "1") {
+                return "Nam";
+            } else {
+                return "Nữ";
+            }
+        };
+        $scope.getVehicles = function (id) {
+            if (id === "0") {
+                return "Xe tải";
+            } else if (id === "1") {
+                return "Xe có cẩu";
+            } else if (id === "2") {
+                return "Xe container";
+            }
+        }
+        function LoadDetail() {
+            var options = {
+                method: 'get',
+                url: $rootScope.config.url + "/requests/" + $scope.id
+            };
+
+            GlobalTpl.request(options, function (response) {
+                // Check there is existing data to load
+
+                if (response.data && response.data !== null) {
+
+                    // Fetch new requests
+                    var res = response.data;
+
+                    $scope.requestDetail.pickupAddress = res.location[0].address;
+                    $scope.requestDetail.receiveAddress = res.location[1].address;
+                    $scope.requestDetail.time = res.detail.createdAt;
+                    $scope.requestDetail.description = res.detail.description;
+                    $scope.requestDetail.vehicleType = res.detail.vehicleType;
+                    $scope.requestDetail.weight = res.detail.weight;
+                    $scope.requestDetail.length = res.detail.length;
+                    $scope.requestDetail.width = res.detail.width;
+                    $scope.requestDetail.height = res.detail.height;
+                    $scope.requestDetail.feature = res.detail.feature;
+                    $scope.requestDetail.receiverName = res.detail.receiverName;
+                    $scope.requestDetail.receiverGender = res.detail.receiverGender;
+                    $scope.requestDetail.receiverDatetime = res.location[1].time;
+                    $scope.requestDetail.receiverPhone = res.detail.receiverPhone;
+                    $scope.requestDetail.stuffImagePath = res.detail.stuffImagePath;
+                    $scope.requestDetail.receiverImagePath = res.detail.receiverImagePath;
+                    $scope.requestDetail.receiverIdentify = res.detail.receiverIdentify;
+                }
+            }, function () {
+                // Stop the ion-refresher from spinning
+                $scope.$broadcast('scroll.refreshComplete');
+                $scope.$broadcast('scroll.infiniteScrollComplete');
+            });
+        }
+
+        LoadDetail();
+    })
+
+    .controller('HistoryDetailCtrl', function ($scope, $stateParams, $rootScope, $http, GlobalTpl, $ionicModal) {
+        $scope.id = $stateParams.id;
+        $scope.rating = 1;
+        $scope.comment = '';
+        $scope.requestDetail = {};
+
+        $ionicModal.fromTemplateUrl('templates/rateClient.html', {
+            scope: $scope,
+            animation: 'slide-in-up'
+        }).then(function (modal) {
+            $scope.rateClientModal = modal;
+        });
+
+        $scope.newRatingClient = function (data) {
+            $scope.clientId = data;
+            $scope.rateClientModal.show();
+        };
+
+        // Close the new task modal
+        $scope.closeNewRating = function () {
+            $scope.rateClientModal.hide();
+        };
+
+        $scope.sendRatingForm = {
+            comment: ''
+        };
+
+        function validForm() {
+            return true;
+        }
+
+        $scope.rateFunction = function (rating) {
+            $scope.rating = rating;
+        };
+
+        $scope.sendRating = function (sendRatingForm) {
+            if (!validForm()) {
+                $scope.formWarning = "Vui lòng nhập đầy đủ thông tin";
+            } else {
+                $scope.formWarning = "";
+                $scope.data = {
+                    driverId: localStorage.driverId,
+                    clientId: $scope.clientId,
+                    requestId: $scope.id,
+                    rating: $scope.rating,
+                    comment: $scope.sendRatingForm.comment
+                }
+                var data = JSON.stringify($scope.data);
+                var options = {
+                    showLoad: true,
+                    method: 'post',
+                    url: $rootScope.config.url + '/client_rates',
+                    data: data,
+                    headers: {
+                        'Content-Type': undefined
+                    }
+                };
+                GlobalTpl.showLoading();
+                $http(options).success(function (response) {
+                    GlobalTpl.hideLoading();
+                    GlobalTpl.showAlert({template: "Gửi đánh giá thành công"});
+                    $scope.closeNewRating();
+                }).error(function (response) {
+                    GlobalTpl.hideLoading();
+                    if (response.status === '400' && response.errorCode === 1) {
+                        GlobalTpl.showAlert({template: "Khách hàng đã được bạn đánh giá!"});
+                    }
+                    else {
+                        GlobalTpl.showAlert({template: response.userMessage});
+                    }
+                }).finally(function () {
+                    GlobalTpl.hideLoading();
+                });
+            }
+        };
+
+        $scope.doRefresh = function () {
+            $scope.rating = 1;
+            $scope.comment = '';
+            $scope.requestDetail = {};
+            LoadDetail();
+        };
+
+        $scope.getGender = function (id) {
+            if (id === "1") {
+                return "Nam";
+            } else {
+                return "Nữ";
+            }
+        };
+        $scope.getVehicles = function (id) {
+            if (id === "0") {
+                return "Xe tải";
+            } else if (id === "1") {
+                return "Xe có cẩu";
+            } else if (id === "2") {
+                return "Xe container";
+            }
+        }
+        function LoadDetail() {
+            var options = {
+                method: 'get',
+                url: $rootScope.config.url + "/requests/" + $scope.id
+            };
+
+            GlobalTpl.request(options, function (response) {
+                // Check there is existing data to load
+
+                if (response.data && response.data !== null) {
+
+                    // Fetch new requests
+                    var res = response.data;
+
+                    $scope.requestDetail.pickupAddress = res.location[0].address;
+                    $scope.requestDetail.receiveAddress = res.location[1].address;
+                    $scope.requestDetail.time = res.detail.createdAt;
+                    $scope.requestDetail.description = res.detail.description;
+                    $scope.requestDetail.vehicleType = res.detail.vehicleType;
+                    $scope.requestDetail.weight = res.detail.weight;
+                    $scope.requestDetail.length = res.detail.length;
+                    $scope.requestDetail.width = res.detail.width;
+                    $scope.requestDetail.height = res.detail.height;
+                    $scope.requestDetail.feature = res.detail.feature;
+                    $scope.requestDetail.receiverName = res.detail.receiverName;
+                    $scope.requestDetail.receiverGender = res.detail.receiverGender;
+                    $scope.requestDetail.receiverDatetime = res.location[1].time;
+                    $scope.requestDetail.receiverPhone = res.detail.receiverPhone;
+                    $scope.requestDetail.stuffImagePath = res.detail.stuffImagePath;
+                    $scope.requestDetail.receiverImagePath = res.detail.receiverImagePath;
+                    $scope.requestDetail.receiverIdentify = res.detail.receiverIdentify;
+                    $scope.requestDetail.clientId = res.detail.clientId;
                 }
             }, function () {
                 // Stop the ion-refresher from spinning

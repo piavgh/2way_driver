@@ -1,0 +1,33 @@
+<ion-modal-view>
+    <ion-header-bar class="bar-stable">
+        <h1 class="title">Đánh giá khách hàng</h1>
+        <button class="button button-clear button-positive" ng-click="closeNewRating()">Hủy</button>
+    </ion-header-bar>
+    <ion-content>
+        <form ng-submit="sendRating(sendRatingForm)">
+            <div class="padding-vertical">
+                <div class="list list-inset">
+                    <label class="item item-divider">
+                        <span>Thang bậc đánh giá</span>
+                    </label>
+
+                    <div class="item text-center" fundoo-rating rating-value="rating" max="5"
+                         on-rating-selected="rateFunction(rating)"></div>
+                    <label class="item item-divider">
+                        <span>Nhận xét</span>
+                    </label>
+
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper">
+                            <input type="text" placeholder="Nhận xét của bạn" ng-model="sendRatingForm.comment">
+                        </label>
+                    </div>
+                </div>
+                <div ng-bind="formWarning" class="assertive text-center padding"></div>
+                <div class="padding">
+                    <button type="submit" class="button button-block button-balanced">Gửi</button>
+                </div>
+            </div>
+        </form>
+    </ion-content>
+</ion-modal-view>

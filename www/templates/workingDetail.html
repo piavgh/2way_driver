@@ -1,0 +1,111 @@
+<ion-view view-title="Chi tiết vận đơn" align-title="center">
+    <ion-content class="has-header text-left">
+        <!-- Pull down refresher -->
+        <ion-refresher
+                pulling-text="Pull to refresh..."
+                on-refresh="doRefresh()">
+        </ion-refresher>
+        <!-- end of refresher -->
+        <div class="list list-inset margin-top">
+            <div class="item item-divider">
+                Thông tin hàng hóa
+            </div>
+            <div class="item padding">
+                <div class="item item-image image" ng-if="requestDetail.stuffImagePath.length">
+                    <!-- Image -->
+                    <img ng-src="{{requestDetail.stuffImagePath}}">
+                    <!-- end of image -->
+                </div>
+            </div>
+            <label class="item">
+                Mô tả
+				<span class="item-note item-text-wrap">
+					{{requestDetail.description}}
+				</span>
+            </label>
+            <label class="item">
+                Chủng loại hàng
+				<span class="item-note">
+					{{requestDetail.feature}}
+				</span>
+            </label>
+            <label class="item">
+                Loại xe
+				<span class="item-note">
+					{{getVehicles(requestDetail.vehicleType)}}
+				</span>
+            </label>
+            <label class="item">
+                Kích thước
+				<span class="item-note">
+					{{requestDetail.length}}x{{requestDetail.width}}x{{requestDetail.height}}
+				</span>
+            </label>
+            <label class="item">
+                Cân nặng
+				<span class="item-note">
+					{{requestDetail.weight}}
+				</span>
+            </label>
+            <label class="item">
+                Địa chỉ gửi
+				<span class="item-note item-text-wrap">
+					{{requestDetail.pickupAddress}}
+				</span>
+            </label>
+            <label class="item">
+                Địa chỉ nhận
+				<span class="item-note item-text-wrap">
+					{{requestDetail.receiveAddress}}
+				</span>
+            </label>
+        </div>
+
+        <div class="list list-inset margin-top">
+            <div class="item item-divider">
+                Thông tin người nhận
+            </div>
+            <label class="item">
+                Họ tên
+				<span class="item-note">
+					{{requestDetail.receiverName}}
+				</span>
+            </label>
+            <label class="item">
+                Giới tính
+				<span class="item-note">
+					{{getGender(requestDetail.receiverGender)}}
+				</span>
+            </label>
+
+            <label class="item">
+                Ngày nhận
+				<span class="item-note">
+					{{requestDetail.receiverDatetime}}
+				</span>
+            </label>
+            <label class="item">
+                Số điện thoại
+				<span class="item-note">
+					{{requestDetail.receiverPhone}}
+				</span>
+            </label>
+            <label class="item">
+                Số CMT
+				<span class="item-note">
+					{{requestDetail.receiverIdentify}}
+				</span>
+            </label>
+
+            <div class="item padding">
+                <div class="item item-image image" ng-if="requestDetail.receiverImagePath.length">
+                    <!-- Image -->
+                    <img ng-src="{{requestDetail.receiverImagePath}}">
+                    <!-- end of image -->
+                </div>
+            </div>
+        </div>
+
+    </ion-content>
+
+</ion-view>
