@@ -32,15 +32,15 @@ navigation history that also transitions its views in and out.
     <ion-side-menu side="left">
         <ion-content>
             <ion-item class="item-avatar stable-bg">
-                <div class="item item-image image" ng-if="driverAvatar.length">
+                <div class="item item-image" ng-if="driverAvatar.length">
                     <img ng-src="{{driverAvatar}}">
                 </div>
-                <div class="item item-image image" ng-if="!driverAvatar.length">
+                <div class="item item-image" ng-if="!driverAvatar.length">
                     <img src="img/ionic.png">
                 </div>
                 <h2>{{driverName}}</h2>
 
-                <p>Xin chào</p>
+                <p>{{driverPhone}}</p>
             </ion-item>
             <ion-list>
                 <ion-item ng-repeat="menu in settings" class="item-icon-right" menu-close ng-href="{{menu.href}}">
@@ -48,7 +48,7 @@ navigation history that also transitions its views in and out.
                     {{menu.title}}
                 </ion-item>
             </ion-list>
-            <ion-item class="item-icon-right" nav-clear menu-close ng-click="exitApp()">
+            <ion-item class="item-icon-right" nav-clear menu-close ng-click="logOutApp()">
                 <i class="icon ion-power"></i>
                 Đăng xuất
             </ion-item>
@@ -65,7 +65,7 @@ navigation history that also transitions its views in and out.
                     <i class="icon ion-information"></i>
                     Giới thiệu
                 </ion-item>
-                <ion-item class="item-icon-right" nav-clear menu-close ng-click="exitApp()">
+                <ion-item class="item-icon-right" nav-clear menu-close ng-click="logOutApp()">
                     <i class="icon ion-power"></i>
                     Đăng xuất
                 </ion-item>

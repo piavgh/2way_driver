@@ -27,11 +27,11 @@ angular.module('driver2way.controllers', [])
             icon: 'ion-cash'
         }];
 
-        $scope.driverName = window.localStorage["fullName"] === undefined ? "" : window.localStorage["fullName"];
+        $scope.driverName = localStorage.fullName === undefined ? "" : localStorage.fullName;
+        $scope.driverPhone = localStorage.phone === undefined ? "" : localStorage.phone;
+        $scope.driverAvatar = localStorage.avatar === undefined ? "" : localStorage.avatar;
 
-        $scope.driverAvatar = window.localStorage["avatar"] === undefined ? "" : window.localStorage["avatar"];
-
-        $scope.exitApp = function () {
+        $scope.logOutApp = function () {
             $ionicPopup.show({
                 title: 'Thông báo',
                 template: '<div class="text-center">Bạn có muốn thoát ứng dụng ?</div>',
@@ -213,11 +213,12 @@ angular.module('driver2way.controllers', [])
                             $http(options).success(function (response) {
                                 GlobalTpl.hideLoading();
                                 if (response.errorCode === 0) {
-                                    window.localStorage['loggedIn'] = true;
-                                    window.localStorage['driverId'] = response.data.driverId;
-                                    window.localStorage['username'] = response.data.username;
-                                    window.localStorage['fullName'] = response.data.fullName;
-                                    window.localStorage['avatar'] = response.data.avatar;
+                                    localStorage.loggedIn = true;
+                                    localStorage.driverId = response.data.driverId;
+                                    localStorage.username = response.data.username;
+                                    localStorage.fullName = response.data.fullName;
+                                    localStorage.phone = response.data.phone;
+                                    localStorage.avatar = response.data.avatar;
                                     $state.go('tab.chance');
                                 } else {
                                     GlobalTpl.showAlert({template: "Sai tài khoản hoặc mật khẩu"});
