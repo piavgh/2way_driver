@@ -928,7 +928,7 @@ angular.module('driver2way.controllers', [])
         function LoadMainRequest() {
             var options = {
                 method: 'get',
-                url: $rootScope.config.url + "/drivers/" + window.localStorage["driverId"]
+                url: $rootScope.config.url + "/drivers/" + localStorage.driverId
             }
 
             GlobalTpl.request(options, function (response) {
@@ -949,7 +949,7 @@ angular.module('driver2way.controllers', [])
                         identifyCardPlace: res.identifyCardPlace,
                         identifyCardFront: res.identifyCardFront,
                         identifyCardBack: res.identifyCardBack,
-                        starRating: (!res.rating) ? "" : res.rating,
+                        starRating: (res.rating % 1 > 0.5) ? Math.ceil(res.rating) : Math.floor(res.rating),
                         numTransactions: (!res.numTransactions) ? "" : res.numTransactions,
                         numSuccessTransactions: (!res.numSuccessTransactions) ? "" : res.numSuccessTransactions,
                         license: res.license,
@@ -977,7 +977,7 @@ angular.module('driver2way.controllers', [])
                 showAlert: (typeof opts.showAlert === 'undefined') ? true : opts.showAlert,
                 method: (typeof opts.method === 'undefined') ? 'get' : opts.method,
                 url: (typeof opts.url === 'undefined')
-                    ? ($rootScope.config.url + "/driver_rates/" + window.localStorage["driverId"] + "?page=" + $scope.page)
+                    ? ($rootScope.config.url + "/driver_rates/" + localStorage.driverId + "?page=" + $scope.page)
                     : opts.url
             };
 
@@ -993,11 +993,11 @@ angular.module('driver2way.controllers', [])
                         var res = response.data[i];
 
                         $scope.requests.push({
-                            fullName: res.fullName,
+                            phone: res.phone,
                             time: res.createdAt,
                             rating: res.rating,
                             comment: res.comment,
-                            updateTime: res.updateAt
+                            updateTime: res.updatedAt
                         });
                     }
 

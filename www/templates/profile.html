@@ -173,7 +173,7 @@
         <!-- Notification for no request -->
         <div class="list list-inset" ng-if="!requests.length">
             <div class="item item-text-wrap text-center">
-                Chưa có giao dịch nào
+                Chưa có đánh giá nào
             </div>
         </div>
         <!-- end of notification -->
@@ -183,7 +183,7 @@
             <div class="item item-divider">
 					<span ng-class="{energized: (req.rating === '5'),
 								positive: (req.rating === '3'), balanced: (req.rating === '4'), assertive: (req.rating === '1'), royal: (req.rating === '2')}">
-					{{req.fullName}}
+					{{req.phone}}
 					</span>
                 <img class="item-note" ng-src="{{get(req.rating)}}"/>
             </div>
@@ -193,15 +193,5 @@
 
         </div>
 
-
-        </div>
-
-        <div class="text-center">
-            <button class="button button-block button-balanced" ng-click="next()">
-                Chỉnh sửa thông tin
-            </button>
-        </div>
-
     </ion-content>
-
 </ion-view>
