@@ -155,12 +155,12 @@ angular.module('driver2way', ['ionic', 'ui.router', 'globaltpl', 'driver2way.con
                 }
             })
 
-            .state('tab.cardManage', {
-                url: '/cardManage',
+            .state('tab.coinManage', {
+                url: '/coinManage',
                 views: {
                     'menuContent': {
-                        templateUrl: 'templates/cardManage.html',
-                        controller: 'CardManageCtrl'
+                        templateUrl: 'templates/coinManage.html',
+                        controller: 'CoinManageCtrl'
                     }
                 }
             })

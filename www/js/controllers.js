@@ -22,7 +22,7 @@ angular.module('driver2way.controllers', [])
             title: 'Nạp tiền ảo',
             icon: 'ion-card'
         }, {
-            href: '#/tab/cardManage',
+            href: '#/tab/coinManage',
             title: 'Quản lý tiền ảo',
             icon: 'ion-cash'
         }];
@@ -549,6 +549,8 @@ angular.module('driver2way.controllers', [])
         }
         function LoadDetail() {
             var options = {
+                showLoad: true,
+                showAlert: true,
                 method: 'get',
                 url: $rootScope.config.url + "/requests/" + $scope.id
             };
@@ -616,6 +618,8 @@ angular.module('driver2way.controllers', [])
         }
         function LoadDetail() {
             var options = {
+                showLoad: true,
+                showAlert: true,
                 method: 'get',
                 url: $rootScope.config.url + "/requests/" + $scope.id
             };
@@ -757,6 +761,8 @@ angular.module('driver2way.controllers', [])
         }
         function LoadDetail() {
             var options = {
+                showLoad: true,
+                showAlert: true,
                 method: 'get',
                 url: $rootScope.config.url + "/requests/" + $scope.id
             };
@@ -864,8 +870,68 @@ angular.module('driver2way.controllers', [])
         );
     })
 
-    .controller('CardManageCtrl', function ($scope, $stateParams, $rootScope, $http, GlobalTpl) {
+    .controller('CoinManageCtrl', function ($scope, $stateParams, $rootScope, $http, GlobalTpl) {
+        $scope.transactions = [];
+        $scope.page = 1;
+        $scope.moreDataCanBeLoaded = false;
+        $scope.first = true;
 
+        $scope.doRefresh = function () {
+            $scope.first = false;
+            $scope.page = 1;
+            $scope.transactions = [];
+            LoadMainRequest();
+        };
+
+        $scope.loadMoreData = function () {
+            LoadMainRequest();
+        };
+
+        $scope.loadData = function () {
+            $scope.transactions = [];
+            $scope.page = 1;
+            LoadMainRequest();
+            $scope.first = false;
+        }
+
+        function LoadMainRequest() {
+            var options = {
+                showLoad: true,
+                showAlert: true,
+                method: 'get',
+                url: $rootScope.config.url + "/manage_coins/" + localStorage.driverId + "?page=" + $scope.page
+            };
+
+            GlobalTpl.request(options, function (response) {
+                // Check there is existing data to load
+                $scope.moreDataCanBeLoaded =
+                    (response && response.data && response.data.length > 0) ? true : false;
+
+                if (response.data && response.data.length > 0) {
+                    // Fetch new requests
+                    for (var i in response.data) {
+                        var res = response.data[i];
+                        $scope.transactions.push({
+                            reason: res.reason,
+                            type: res.type,
+                            amount: res.amount,
+                            createdAt: (res.createdAt === undefined) ? '' : res.createdAt,
+                            remainCoin: res.remainCoin
+                        });
+                    }
+
+                    $scope.page++;
+                }
+            }, function () {
+                // Stop the ion-refresher from spinning
+                $scope.$broadcast('scroll.refreshComplete');
+                $scope.$broadcast('scroll.infiniteScrollComplete');
+            });
+        }
+
+        if ($scope.first === true) {
+            LoadMainRequest();
+        }
     })
 
     .controller('ProfileCtrl', function ($scope, $state, GlobalTpl, $rootScope) {

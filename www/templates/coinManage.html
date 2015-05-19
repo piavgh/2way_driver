@@ -9,7 +9,7 @@
 
         <div class="padding-vertical">
             <!-- Notification for no request -->
-            <div class="list list-inset" ng-if="!chances.length">
+            <div class="list list-inset" ng-if="!transactions.length">
                 <div class="item item-text-wrap text-center">
                     Chưa có giao dịch
                 </div>
@@ -17,18 +17,18 @@
             <!-- end of notification -->
 
             <!-- Request list -->
-            <div class="list list-inset" ng-repeat="chance in chances" ng-click="goDetail(chance)">
+            <div class="list list-inset" ng-repeat="transaction in transactions">
                 <div class="item item-divider balanced">
-                    <span>{{chance.clientPhone}}</span>
+                    <span>{{transaction.amount}}</span>
                 </div>
                 <div class="item">
-                    <label>{{chance.description}}</label>
+                    <label>{{transaction.reason}}</label>
                 </div>
                 <div class="item">
-                    <label>Từ: {{chance.pickupLocation}}</label>
+                    <label>Số xu còn: {{transaction.remainCoin}} xu</label>
                 </div>
                 <div class="item">
-                    <label>Đến: {{chance.receiveLocation}}</label>
+                    <label>{{transaction.createdAt}}</label>
                 </div>
             </div>
         </div>
