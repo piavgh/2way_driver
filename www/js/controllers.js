@@ -511,12 +511,17 @@ angular.module('driver2way.controllers', [])
                 };
                 GlobalTpl.showLoading();
                 $http(options).success(function (response) {
-                    $scope.biddedChances.push($scope.id);
-                    window.localStorage["biddedChances"] = JSON.stringify($scope.biddedChances);
-                    $scope.isDisableBid = true;
-                    GlobalTpl.hideLoading();
-                    GlobalTpl.showAlert({template: "Gửi báo giá thành công"});
-                    $scope.closeNewBid();
+                    if (response.errorCode == 0) {
+                        $scope.biddedChances.push($scope.id);
+                        window.localStorage["biddedChances"] = JSON.stringify($scope.biddedChances);
+                        $scope.isDisableBid = true;
+                        GlobalTpl.hideLoading();
+                        GlobalTpl.showAlert({template: "Gửi báo giá thành công"});
+                        $scope.closeNewBid();
+                    } else if (response.errorCode == 4) {
+                        GlobalTpl.hideLoading();
+                        GlobalTpl.showAlert({template: response.userMessage});
+                    }
                 }).error(function () {
                     GlobalTpl.hideLoading();
                     GlobalTpl.showAlert({template: "Vui lòng thử lại"});
