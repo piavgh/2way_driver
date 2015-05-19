@@ -34,13 +34,15 @@ angular.module('driver2way.controllers', [])
         $scope.logOutApp = function () {
             $ionicPopup.show({
                 title: 'Thông báo',
-                template: '<div class="text-center">Bạn có muốn thoát ứng dụng ?</div>',
+                template: '<div class="text-center">Bạn muốn đăng xuất?</div>',
                 buttons: [
                     {
                         text: 'Thoát',
                         type: 'button-positive',
                         onTap: function (e) {
-                            navigator.app.exitApp();
+                            window.localStorage['loggedIn'] = "false";
+                            window.localStorage['deviceID'] = undefined;
+                            $state.go('login');
                         }
                     },
                     {
@@ -152,7 +154,7 @@ angular.module('driver2way.controllers', [])
     .controller('LoginCtrl', function ($scope, $state, $ionicPlatform, GlobalTpl, $rootScope, $http, $cordovaNetwork, $cordovaDevice) {
         $ionicPlatform.ready(function () {
 
-                if ($cordovaNetwork.getNetwork() === 'none') {
+                if ($cordovaNetwork.getNetwork() === 0 || $cordovaNetwork.getNetwork() === 'unknown' || $cordovaNetwork.getNetwork() === 'none') {
                     $ionicPopup.alert({
                         title: 'Lỗi kết nối !',
                         content: '<div class="only-text">Vui lòng bật Wifi hoặc 3G để sử dụng ứng dụng</div>'
@@ -160,32 +162,7 @@ angular.module('driver2way.controllers', [])
                         navigator.app.exitApp();
                     });
                 } else {
-                    if (window.localStorage['deviceID'] === undefined) {
-                        // Get UUID device
-                        window.localStorage['deviceID'] = $cordovaDevice.getUUID();
-                    }
-
                     $scope.deviceID = window.localStorage['deviceID'];
-
-                    if (window.localStorage['loggedIn'] === "true") {
-                        var options = {
-                            showLoad: true,
-                            method: 'get',
-                            url: $rootScope.config.url + "/drivers/"
-                            + window.localStorage['driverId'] + "/transactions?page=1&type=working"
-                        };
-
-                        GlobalTpl.request(options, function (response) {
-
-                            if (response.data && response.data.length > 0) {
-                                $state.go('tab.working');
-                            } else {
-                                $state.go('tab.chance');
-                            }
-                        }, function () {
-
-                        });
-                    }
 
                     $scope.loginForm = {
                         username: '',

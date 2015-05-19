@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 angular.module('driver2way', ['ionic', 'ui.router', 'globaltpl', 'driver2way.controllers', 'driver2way.services', 'ngCordova'])
 
-    .run(function ($ionicPlatform, $rootScope) {
+    .run(function ($ionicPlatform, $rootScope, $cordovaNetwork, $cordovaDevice, GlobalTpl, $state) {
 
         $rootScope.config = {
             url: 'http://hmac.nhahang.bz/v1'
@@ -19,6 +19,41 @@ angular.module('driver2way', ['ionic', 'ui.router', 'globaltpl', 'driver2way.con
             }
             if (window.StatusBar) {
                 StatusBar.styleDefault();
+            }
+            if ($cordovaNetwork.getNetwork() === 0 || $cordovaNetwork.getNetwork() === 'unknown' || $cordovaNetwork.getNetwork() === 'none') {
+                $ionicPopup.alert({
+                    title: 'Lỗi kết nối !',
+                    content: '<div class="only-text">Vui lòng bật Wifi hoặc 3G để sử dụng ứng dụng</div>'
+                }).then(function (result) {
+                    navigator.app.exitApp();
+                });
+            } else {
+                if (window.localStorage['deviceID'] === undefined) {
+                    // Get UUID device
+                    window.localStorage['deviceID'] = $cordovaDevice.getUUID();
+                }
+
+                if (window.localStorage['loggedIn'] === "true") {
+                    var options = {
+                        showLoad: true,
+                        method: 'get',
+                        url: $rootScope.config.url + "/drivers/"
+                        + window.localStorage['driverId'] + "/transactions?page=1&type=working"
+                    };
+
+                    GlobalTpl.request(options, function (response) {
+
+                        if (response.data && response.data.length > 0) {
+                            $state.go('tab.working');
+                        } else {
+                            $state.go('tab.chance');
+                        }
+                    }, function () {
+
+                    });
+                } else {
+                    $state.go("login");
+                }
             }
         });
     })
