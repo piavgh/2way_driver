@@ -40,8 +40,8 @@ angular.module('driver2way.controllers', [])
                         text: 'Thoát',
                         type: 'button-positive',
                         onTap: function (e) {
-                            window.localStorage['loggedIn'] = "false";
-                            window.localStorage['deviceID'] = undefined;
+                            localStorage.loggedIn = "false";
+                            localStorage.clear();
                             $state.go('login');
                         }
                     },
@@ -190,6 +190,7 @@ angular.module('driver2way.controllers', [])
                             $http(options).success(function (response) {
                                 GlobalTpl.hideLoading();
                                 if (response.errorCode === 0) {
+                                    localStorage.clear();
                                     localStorage.loggedIn = true;
                                     localStorage.driverId = response.data.driverId;
                                     localStorage.username = response.data.username;
@@ -522,9 +523,9 @@ angular.module('driver2way.controllers', [])
                         GlobalTpl.hideLoading();
                         GlobalTpl.showAlert({template: response.userMessage});
                     }
-                }).error(function () {
+                }).error(function (response) {
                     GlobalTpl.hideLoading();
-                    GlobalTpl.showAlert({template: "Vui lòng thử lại"});
+                    GlobalTpl.showAlert({template: response.userMessage});
                 }).finally(function () {
                     GlobalTpl.hideLoading();
                 });
