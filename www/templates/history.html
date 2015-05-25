@@ -34,7 +34,10 @@
                     <p class="faded">{{historyRequest.createdAt}}</p>
                 </ion-item>
                 <ion-item>
-                    <p class="not-faded">{{historyRequest.description}}</p>
+                    <p class="not-faded">Mô tả: {{historyRequest.description}}</p>
+
+                    <p ng-if="historyRequest.requestStatus == 4">Trạng thái: <span class="balanced">Thành công</span></p>
+                    <p ng-if="historyRequest.requestStatus == 5">Trạng thái: <span class="assertive">Thất bại</span></p>
 
                     <p class="not-faded">Địa chỉ gửi: {{historyRequest.pickupLocation}}</p>
 

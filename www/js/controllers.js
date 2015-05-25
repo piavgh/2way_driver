@@ -422,6 +422,7 @@ angular.module('driver2way.controllers', [])
                         $scope.historyRequests.push({
                             requestId: res.detail.id,
                             description: res.detail.description,
+                            requestStatus: res.detail.status,
                             clientPhone: (res.client.phone.substring(0, 2) == "84") ? "0" + res.client.phone.substring(2) : res.client.phone,
                             clientName: res.client.fullName,
                             createdAt: "Ngày " + createdDate.getDate() + " tháng " + (createdDate.getMonth() + 1) + " năm " + createdDate.getFullYear() + " lúc " + res.detail.createdAt.substring(11, 16),
