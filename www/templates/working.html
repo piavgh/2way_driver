@@ -18,18 +18,26 @@
 
             <!-- Request list -->
             <div class="list list-inset" ng-repeat="workingRequest in workingRequests" ng-click="goDetail(workingRequest)">
-                <div class="item item-divider positive-bg positive-border">
-                    <span>{{workingRequest.clientPhone}}</span>
-                </div>
-                <div class="item">
-                    <label>{{workingRequest.description}}</label>
-                </div>
-                <div class="item">
-                    <label>Từ: {{workingRequest.pickupLocation}}</label>
-                </div>
-                <div class="item">
-                    <label>Đến: {{workingRequest.receiveLocation}}</label>
-                </div>
+                <ion-item class="item-avatar stable-bg">
+                    <div class="item item-image">
+                        <img src="img/ionic.png">
+                    </div>
+                    <h2>{{workingRequest.clientPhone}}</h2>
+
+                    <p class="faded">{{workingRequest.createdAt}}</p>
+                </ion-item>
+                <ion-item>
+                    <p class="not-faded">{{workingRequest.description}}</p>
+
+                    <p class="not-faded">Địa chỉ gửi: {{workingRequest.pickupLocation}}</p>
+
+                    <p class="not-faded">Địa chỉ nhận: {{workingRequest.receiveLocation}}</p>
+                </ion-item>
+                <ion-item class="item-image img" ng-if="workingRequest.stuffImagePath.length">
+                    <!-- Image -->
+                    <img ng-src="{{workingRequest.stuffImagePath}}">
+                    <!-- end of image -->
+                </ion-item>
             </div>
         </div>
         <!-- end of request list -->

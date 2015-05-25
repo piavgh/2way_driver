@@ -126,7 +126,7 @@ angular.module('driver2way.controllers', [])
                 desiredAccuracy: 10,
                 stationaryRadius: 20,
                 distanceFilter: 30,
-                notificationTitle: '2Way Background tracking', // <-- android only, customize the title of the notification
+                notificationTitle: 'Driver2Way location tracking', // <-- android only, customize the title of the notification
                 notificationText: 'Đã bật', // <-- android only, customize the text of the notification
                 activityType: 'AutomotiveNavigation',
                 debug: true, // <-- enable this hear sounds for background-geolocation life-cycle.
@@ -254,13 +254,16 @@ angular.module('driver2way.controllers', [])
                     // Fetch new requests
                     for (var i in response.data) {
                         var res = response.data[i];
+                        var createdDate = new Date(res.detail.createdAt.substring(0, 10));
                         $scope.workingRequests.push({
                             requestId: res.detail.id,
                             description: res.detail.description,
-                            //clientPhone: res.client.phone,
-                            createdAt: (res.detail.createdAt === undefined) ? '' : res.detail.createdAt,
+                            clientPhone: (res.client.phone.substring(0, 2) == "84") ? "0" + res.client.phone.substring(2) : res.client.phone,
+                            clientName: res.client.fullName,
+                            createdAt: "Ngày " + createdDate.getDate() + " tháng " + (createdDate.getMonth() + 1) + " năm " + createdDate.getFullYear() + " lúc " + res.detail.createdAt.substring(11, 16),
                             pickupLocation: res.location[0].address,
-                            receiveLocation: res.location[1].address
+                            receiveLocation: res.location[1].address,
+                            stuffImagePath: res.detail.stuffImagePath
                         });
                     }
 
@@ -323,13 +326,16 @@ angular.module('driver2way.controllers', [])
                     // Fetch new requests
                     for (var i in response.data) {
                         var res = response.data[i];
+                        var createdDate = new Date(res.detail.createdAt.substring(0, 10));
                         $scope.chances.push({
                             requestId: res.detail.id,
                             description: res.detail.description,
-                            clientPhone: res.client.phone,
-                            createdAt: (res.detail.createdAt === undefined) ? '' : res.detail.createdAt,
+                            clientPhone: (res.client.phone.substring(0, 2) == "84") ? "0" + res.client.phone.substring(2) : res.client.phone,
+                            clientName: res.client.fullName,
+                            createdAt: "Ngày " + createdDate.getDate() + " tháng " + (createdDate.getMonth() + 1) + " năm " + createdDate.getFullYear() + " lúc " + res.detail.createdAt.substring(11, 16),
                             pickupLocation: res.location[0].address,
-                            receiveLocation: res.location[1].address
+                            receiveLocation: res.location[1].address,
+                            stuffImagePath: res.detail.stuffImagePath
                         });
                     }
 
@@ -412,13 +418,16 @@ angular.module('driver2way.controllers', [])
                     // Fetch new requests
                     for (var i in response.data) {
                         var res = response.data[i];
+                        var createdDate = new Date(res.detail.createdAt.substring(0, 10));
                         $scope.historyRequests.push({
                             requestId: res.detail.id,
                             description: res.detail.description,
-                            requestStatus: res.detail.status,
-                            createdAt: (res.detail.createdAt === undefined) ? '' : res.detail.createdAt,
+                            clientPhone: (res.client.phone.substring(0, 2) == "84") ? "0" + res.client.phone.substring(2) : res.client.phone,
+                            clientName: res.client.fullName,
+                            createdAt: "Ngày " + createdDate.getDate() + " tháng " + (createdDate.getMonth() + 1) + " năm " + createdDate.getFullYear() + " lúc " + res.detail.createdAt.substring(11, 16),
                             pickupLocation: res.location[0].address,
-                            receiveLocation: res.location[1].address
+                            receiveLocation: res.location[1].address,
+                            stuffImagePath: res.detail.stuffImagePath
                         });
                     }
                     $scope.page++;

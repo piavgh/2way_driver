@@ -18,18 +18,26 @@
 
             <!-- Request list -->
             <div class="list list-inset" ng-repeat="chance in chances" ng-click="goDetail(chance)">
-                <div class="item item-divider balanced">
-                    <span>{{chance.clientPhone}}</span>
-                </div>
-                <div class="item">
-                    <label>{{chance.description}}</label>
-                </div>
-                <div class="item">
-                    <label>Từ: {{chance.pickupLocation}}</label>
-                </div>
-                <div class="item">
-                    <label>Đến: {{chance.receiveLocation}}</label>
-                </div>
+                <ion-item class="item-avatar stable-bg">
+                    <div class="item item-image">
+                        <img src="img/ionic.png">
+                    </div>
+                    <h2>{{chance.clientPhone}}</h2>
+
+                    <p class="faded">{{chance.createdAt}}</p>
+                </ion-item>
+                <ion-item>
+                    <p class="not-faded">{{chance.description}}</p>
+
+                    <p class="not-faded">Địa chỉ gửi: {{chance.pickupLocation}}</p>
+
+                    <p class="not-faded">Địa chỉ nhận: {{chance.receiveLocation}}</p>
+                </ion-item>
+                <ion-item class="item-image img" ng-if="chance.stuffImagePath.length">
+                    <!-- Image -->
+                    <img ng-src="{{chance.stuffImagePath}}">
+                    <!-- end of image -->
+                </ion-item>
             </div>
         </div>
         <!-- end of request list -->

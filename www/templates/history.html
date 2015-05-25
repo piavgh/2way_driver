@@ -25,21 +25,26 @@
 
             <!-- Request list -->
             <div class="list list-inset" ng-repeat="historyRequest in historyRequests" ng-click="goDetail(historyRequest)">
-                <div class="item item-divider balanced-bg balanced-border" ng-if="historyRequest.requestStatus == 4">
-                    <span>Thành công</span>
-                </div>
-                <div class="item item-divider assertive-bg assertive-border" ng-if="historyRequest.requestStatus == 5">
-                    <span>Thất bại</span>
-                </div>
-                <div class="item">
-                    <label>{{historyRequest.description}}</label>
-                </div>
-                <div class="item">
-                    <label>Từ: {{historyRequest.pickupLocation}}</label>
-                </div>
-                <div class="item">
-                    <label>Đến: {{historyRequest.receiveLocation}}</label>
-                </div>
+                <ion-item class="item-avatar stable-bg">
+                    <div class="item item-image">
+                        <img src="img/ionic.png">
+                    </div>
+                    <h2>{{historyRequest.clientPhone}}</h2>
+
+                    <p class="faded">{{historyRequest.createdAt}}</p>
+                </ion-item>
+                <ion-item>
+                    <p class="not-faded">{{historyRequest.description}}</p>
+
+                    <p class="not-faded">Địa chỉ gửi: {{historyRequest.pickupLocation}}</p>
+
+                    <p class="not-faded">Địa chỉ nhận: {{historyRequest.receiveLocation}}</p>
+                </ion-item>
+                <ion-item class="item-image img" ng-if="historyRequest.stuffImagePath.length">
+                    <!-- Image -->
+                    <img ng-src="{{historyRequest.stuffImagePath}}">
+                    <!-- end of image -->
+                </ion-item>
             </div>
         </div>
         <!-- end of request list -->

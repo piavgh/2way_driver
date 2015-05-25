@@ -65,6 +65,20 @@ ul.rating {
     max-height: 240px;
 }
 
+.img {
+    height: 200px !important;
+    display: block;
+    width: auto !important;
+}
+
 .padding_left {
     padding-left: 40px;
+}
+
+.faded {
+    text-decoration-color: #B3B3B3;
+}
+
+.not-faded {
+    text-decoration-color: #000000 !important;
 }
