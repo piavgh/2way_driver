@@ -27,11 +27,11 @@
                     <p class="faded">{{workingRequest.createdAt}}</p>
                 </ion-item>
                 <ion-item>
-                    <p class="not-faded">Mô tả: {{workingRequest.description}}</p>
+                    <p class="not-faded">Mô tả: <span class="item-note item-text-wrap">{{workingRequest.description}}</span></p>
 
-                    <p class="not-faded">Địa chỉ gửi: {{workingRequest.pickupLocation}}</p>
+                    <p class="not-faded">Địa chỉ gửi: <span class="item-note item-text-wrap">{{workingRequest.pickupLocation}}</span></p>
 
-                    <p class="not-faded">Địa chỉ nhận: {{workingRequest.receiveLocation}}</p>
+                    <p class="not-faded">Địa chỉ nhận: <span class="item-note item-text-wrap">{{workingRequest.receiveLocation}}</span></p>
                 </ion-item>
                 <ion-item class="item-image img" ng-if="workingRequest.stuffImagePath.length">
                     <!-- Image -->

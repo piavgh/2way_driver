@@ -27,11 +27,11 @@
                     <p class="faded">{{chance.createdAt}}</p>
                 </ion-item>
                 <ion-item>
-                    <p class="not-faded">Mô tả: {{chance.description}}</p>
+                    <p class="not-faded">Mô tả: <span class="item-note item-text-wrap">{{chance.description}}</span></p>
 
-                    <p class="not-faded">Địa chỉ gửi: {{chance.pickupLocation}}</p>
+                    <p class="not-faded">Địa chỉ gửi: <span class="item-note item-text-wrap">{{chance.pickupLocation}}</span></p>
 
-                    <p class="not-faded">Địa chỉ nhận: {{chance.receiveLocation}}</p>
+                    <p class="not-faded">Địa chỉ nhận: <span class="item-note item-text-wrap">{{chance.receiveLocation}}</span></p>
                 </ion-item>
                 <ion-item class="item-image img" ng-if="chance.stuffImagePath.length">
                     <!-- Image -->

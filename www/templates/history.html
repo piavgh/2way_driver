@@ -34,14 +34,14 @@
                     <p class="faded">{{historyRequest.createdAt}}</p>
                 </ion-item>
                 <ion-item>
-                    <p class="not-faded">Mô tả: {{historyRequest.description}}</p>
+                    <p class="not-faded">Mô tả: <span class="item-note item-text-wrap">{{historyRequest.description}}</span></p>
 
-                    <p ng-if="historyRequest.requestStatus == 4">Trạng thái: <span class="balanced">Thành công</span></p>
-                    <p ng-if="historyRequest.requestStatus == 5">Trạng thái: <span class="assertive">Thất bại</span></p>
+                    <p ng-if="historyRequest.requestStatus == 4">Trạng thái: <span class="balanced item-note item-text-wrap">Thành công</span></p>
+                    <p ng-if="historyRequest.requestStatus == 5">Trạng thái: <span class="assertive item-note item-text-wrap">Thất bại</span></p>
 
-                    <p class="not-faded">Địa chỉ gửi: {{historyRequest.pickupLocation}}</p>
+                    <p class="not-faded">Địa chỉ gửi: <span class="item-note item-text-wrap">{{historyRequest.pickupLocation}}</span></p>
 
-                    <p class="not-faded">Địa chỉ nhận: {{historyRequest.receiveLocation}}</p>
+                    <p class="not-faded">Địa chỉ nhận: <span class="item-note item-text-wrap">{{historyRequest.receiveLocation}}</span></p>
                 </ion-item>
                 <ion-item class="item-image img" ng-if="historyRequest.stuffImagePath.length">
                     <!-- Image -->
